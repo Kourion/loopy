@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import jpp.infinityloop.board.Board;
 
@@ -21,6 +22,7 @@ public class GameInterfacePane extends Pane{
 	private String tileData = "";
 	private boolean isPredefinedBord = false, isRandomBord = false;
 	private StyleType currentStyle = StyleType.AliceBlue;
+	private GridPane flowgrid;
 	String color = "blue";
 	public GameInterfacePane(){
 	}
@@ -38,7 +40,7 @@ public class GameInterfacePane extends Pane{
 		}
 		
 		BorderPane displayPane = new BorderPane();
-		FlowPane flowgrid = new FlowPane();
+		flowgrid = new GridPane();
 		
 		/** Pick a random coloring style for the board.Create icons and choose randomly between filled and non-filled versions, as well as a blend-mode. **/
 		currentStyle = randomStyle();
@@ -213,7 +215,8 @@ public class GameInterfacePane extends Pane{
 					ctrl.setTileButtonStyle(gameTile, flowgrid, columnCount, rowCount);
 					
 					//icon.setBlendMode(BlendMode.DIFFERENCE);
-					flowgrid.getChildren().add(gameTile);
+					//flowgrid.getChildren().add(gameTile);
+					flowgrid.add(gameTile, currColumn, currRow);
 					
 					ctrl.setTileButtonLogic(gameTile, flowgrid, columnCount, rowCount);
 					
@@ -353,5 +356,11 @@ public class GameInterfacePane extends Pane{
 		return columnCount;
 	}
 	
+	public Tile getTile(int row, int col) {
+		return (Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col );
+	}
 	
+	public int getTileCol(Tile tile) {
+		return 0;
+	}
 }

@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -189,7 +190,7 @@ public class GuiControl {
     	//gameinterface.setStyle("-fx-background-color: orangered; -fx-border-color: orangered; -fx-focus-color: orangered; -fx-faint-focus-color: orangered;");
     } */
     
-    public void fitToWindow(GameInterfacePane grandparent, BorderPane parent, FlowPane child){ //GameInterfacePane, displayPane, flowgrid
+    public void fitToWindow(GameInterfacePane grandparent, BorderPane parent, GridPane child){ //GameInterfacePane, displayPane, flowgrid
     	
     	grandparent.widthProperty().addListener(new ChangeListener<Number>() {
 		    @Override 

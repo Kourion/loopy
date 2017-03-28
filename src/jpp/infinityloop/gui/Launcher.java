@@ -44,7 +44,7 @@ public class Launcher extends Application {
 	@Override
 	public void start(Stage arg0) throws Exception {
 		BorderPane root = new BorderPane(); 
-		ButtonPane menuPane = new ButtonPane();
+		ButtonPane menuPane = new ButtonPane(gameinterface);
 		
 		//String savegame = "";
 		//String gameData = reader.read("testfiles\\03_sample_valid_solved.bin");
