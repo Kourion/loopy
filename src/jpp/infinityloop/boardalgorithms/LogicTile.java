@@ -15,4 +15,60 @@ public class LogicTile {
 		this.down = down;
 	}
 
+	/**
+	 * @return the left
+	 */
+	public boolean hasLeft() {
+		return left;
+	}
+
+	/**
+	 * @param left the left to set
+	 */
+	public void setLeft(boolean left) {
+		this.left = left;
+	}
+
+	/**
+	 * @return the up
+	 */
+	public boolean hasUp() {
+		return up;
+	}
+
+	/**
+	 * @param up the up to set
+	 */
+	public void setUp(boolean up) {
+		this.up = up;
+	}
+
+	/**
+	 * @return the right
+	 */
+	public boolean hasRight() {
+		return right;
+	}
+
+	/**
+	 * @param right the right to set
+	 */
+	public void setRight(boolean right) {
+		this.right = right;
+	}
+
+	/**
+	 * @return the down
+	 */
+	public boolean hasDown() {
+		return down;
+	}
+
+	/**
+	 * @param down the down to set
+	 */
+	public void setDown(boolean down) {
+		this.down = down;
+	}
+
 }
