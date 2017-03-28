@@ -1,5 +1,7 @@
 package jpp.infinityloop.gui;
 
+import java.io.File;
+
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -13,11 +15,11 @@ public class ButtonPane extends FlowPane{
 		
 		//this.style = style;
 		
-		ImageView loadFileIcon = new ImageView( new Image( getClass().getResource("sekkyumuicons\\_getdoc.png").toExternalForm() ) );
-		ImageView createRandomBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons\\_play.png").toExternalForm() ) );
-		ImageView solveBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons\\_PluginGreenButton.png").toExternalForm() ) );
-		ImageView saveBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons\\_WriteDocument.png").toExternalForm() ) );
-		ImageView newFinishedColorIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons\\_picture_document.png").toExternalForm() ) );
+		ImageView loadFileIcon = new ImageView( new Image( getClass().getResource("sekkyumuicons"+ File.separator + "_getdoc.png").toExternalForm() ) );
+		ImageView createRandomBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons"+ File.separator + "_play.png").toExternalForm() ) );
+		ImageView solveBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons"+ File.separator + "_PluginGreenButton.png").toExternalForm() ) );
+		ImageView saveBoardIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons"+ File.separator + "_WriteDocument.png").toExternalForm() ) );
+		ImageView newFinishedColorIcon = new ImageView( new Image(getClass().getResource("sekkyumuicons"+ File.separator + "_picture_document.png").toExternalForm() ) );
 		
 		
 		//double iconSize = 1/(32/20);

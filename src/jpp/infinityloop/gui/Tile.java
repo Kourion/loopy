@@ -1,5 +1,7 @@
 package jpp.infinityloop.gui;
 
+import java.io.File;
+
 import javafx.scene.control.Button;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
@@ -7,7 +9,7 @@ import javafx.scene.image.ImageView;
 
 public class Tile extends Button{
 
-	Image icon = new Image(getClass().getResource("tileicons\\bend.png").toExternalForm() );
+	Image icon = new Image(getClass().getResource("tileicons"+ File.separator + "bend.png").toExternalForm() );
 	TileType type = TileType.EMPTY;
 	boolean up = false, right = false, down = false, left = false;
 	int column = 0, row = 0;

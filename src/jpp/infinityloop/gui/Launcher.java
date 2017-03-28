@@ -50,7 +50,7 @@ public class Launcher extends Application {
 		//String gameData = reader.read("testfiles\\03_sample_valid_solved.bin");
 		//savegame = gameData;
 		//writer.write(savegame); //TODO WRITER
-		File selectedFile = new File("testfiles\\03_sample_valid_solved.bin");
+		File selectedFile = new File("testfiles"+ File.separator + "03_sample_valid_solved.bin");
 		byte[] dataBytes = new byte[(int)selectedFile.length()];
 		@SuppressWarnings("resource")
 		InputStream inputData = new BufferedInputStream(new FileInputStream(selectedFile));

@@ -1,6 +1,7 @@
 package jpp.infinityloop.gui;
 
 
+import java.io.File;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javafx.scene.image.Image;
@@ -50,20 +51,21 @@ public class GameInterfacePane extends Pane{
 		Image deadendIcon = null;
 		Image straightIcon = null;
 		Image teeIcon = null;
-		Image emptyIcon = new Image(getClass().getResource("tileicons\\empty.png").toExternalForm() );
+		Image emptyIcon = new Image(getClass().getResource("tileicons"+ File.separator + "empty.png").toExternalForm() );
 		
 		if(Math.random()<0.5){
-			bendIcon = new Image( getClass().getResource("tileicons\\bend.png").toExternalForm() );
-			crossIcon = new Image(getClass().getResource("tileicons\\cross.png").toExternalForm() );
-			deadendIcon = new Image(getClass().getResource("tileicons\\deadend.png").toExternalForm() );
-			straightIcon = new Image(getClass().getResource("tileicons\\straight.png").toExternalForm() );
-			teeIcon = new Image(getClass().getResource("tileicons\\tee.png").toExternalForm() );
+			
+			bendIcon = new Image( getClass().getResource("tileicons"+ File.separator + "bend.png").toExternalForm() );
+			crossIcon = new Image(getClass().getResource("tileicons"+ File.separator + "cross.png").toExternalForm() );
+			deadendIcon = new Image(getClass().getResource("tileicons"+ File.separator + "deadend.png").toExternalForm() );
+			straightIcon = new Image(getClass().getResource("tileicons"+ File.separator + "straight.png").toExternalForm() );
+			teeIcon = new Image(getClass().getResource("tileicons"+ File.separator + "tee.png").toExternalForm() );
 		}else{
-			bendIcon = new Image( getClass().getResource("tileicons\\bend_o.png").toExternalForm() );
-			crossIcon = new Image(getClass().getResource("tileicons\\cross_o.png").toExternalForm() );
-			deadendIcon = new Image(getClass().getResource("tileicons\\deadend_o.png").toExternalForm() );
-			straightIcon = new Image(getClass().getResource("tileicons\\straight_o.png").toExternalForm() );
-			teeIcon = new Image(getClass().getResource("tileicons\\tee_o.png").toExternalForm() );
+			bendIcon = new Image( getClass().getResource("tileicons"+ File.separator + "bend_o.png").toExternalForm() );
+			crossIcon = new Image(getClass().getResource("tileicons"+ File.separator + "cross_o.png").toExternalForm() );
+			deadendIcon = new Image(getClass().getResource("tileicons"+ File.separator + "deadend_o.png").toExternalForm() );
+			straightIcon = new Image(getClass().getResource("tileicons"+ File.separator + "straight_o.png").toExternalForm() );
+			teeIcon = new Image(getClass().getResource("tileicons"+ File.separator + "tee_o.png").toExternalForm() );
 		}
 		double rng = Math.random(); int blendMode;
 		if(rng<0.249){
