@@ -1,5 +1,8 @@
 /bin/
 .classpath
 .project
+.settings
+.svn
+/othericons/
 /savegames/
 /screenshots/
