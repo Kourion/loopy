@@ -7,7 +7,7 @@ import jpp.infinityloop.gui.TileType;
 
 public class RandomBoard {
 
-	private int width = 0, height = 0, actualDeadEndEdges = 0, actualDeadEndCenter;
+	private int width = 0, height = 0, actualDeadEndEdges = 0, actualDeadEndCenter = 0;
 	
 	public RandomBoard() {
 		
@@ -15,11 +15,12 @@ public class RandomBoard {
 	}
 
 	public Board createRandomBoard(){
-		Board board = null;
 		
 		int rngW = ThreadLocalRandom.current().nextInt(4, 6); //51
 		int rngH = ThreadLocalRandom.current().nextInt(4, 6); //51
 		
+		actualDeadEndEdges = 0;
+		actualDeadEndCenter = 0;
 		rngW = 10; rngH = 10; //TODO REMOVE
 		
 		this.width = rngW;
@@ -97,16 +98,62 @@ public class RandomBoard {
 			filledTiles++;
 	    }
 	    
+	    //Generate center tiles
+	    for (int i = 1; i < rngH-1; i++) {
+			for (int j = 1; j < rngW-1; j++) {
+				array[i][j] = getCenterTile(getRandomCenterType());
+			}
+		}
+	    
 	    System.out.println("Expect "+amountNonEmptyTiles+" tiles to be filled. Of these "+filledTiles+" are already filled.");
+	    System.out.println("Expect "+supposedDeadEndEdges+" edge tiles to be dead ends."+" There are currently "+actualDeadEndEdges+" such tiles.");
+	    System.out.println("Expect "+supposedDeadEndCenter+" center tiles to be dead ends."+" There are currently "+actualDeadEndCenter +" such tiles.");
 	    
-	    
+	    array = createSolvedArray(array);
 	    
 	    //Try to fix it with purposeful turns
 	    //Try to fix it with switching non-empty tiles with empty tiles
 	    
 	    System.out.println(print(array));
 	    //System.exit(-1);
+	    Board board = new Board(print(array), print(array), rngW, rngH);
+	    board.setTiledata(print(array));
+	    board.setColumns(rngW);
+	    board.setRows(rngH);
 		return board;
+	}
+	
+	private LogicTile[][] createSolvedArray(LogicTile[][] array){
+		for (int row = 0; row < height; row++) {		//MAYBE DO EDGES SEPERATELY?
+			for (int column = 0; column < width; column++) {
+				if(array[row][column].hasRight()){
+					if(column != width-1){
+						if(array[row][column].hasLeft()){
+						}else{
+							if(row == 0){
+								if(array[row][column].getType() == TileType.BEND){
+									array[row][column].setRight(false);
+									array[row][column].setLeft(true);
+								}else if(array[row][column].getType() == TileType.DEADEND){
+									array[row][column].setRight(false);
+									array[row][column].setLeft(true);
+								}
+							}else if(row == height-1){
+								
+							}else{
+								if(array[row][column].getType() == TileType.BEND){
+									array[row][column].setRight(false);
+									array[row][column].setLeft(true);
+								}
+							}
+
+						}
+					}
+					
+				}
+			}
+		}
+		return array;
 	}
 	
 	private String print(LogicTile[][] logicTileRaw) {
@@ -115,7 +162,7 @@ public class RandomBoard {
 			for (int j = 0; j < width; j++) {
 				printString = printString + getTileString(logicTileRaw[i][j]);
 			}
-			printString = printString + System.lineSeparator();
+			printString = printString + "\n"; // System.lineSeparator(); //TODO put back in
 		}
 		return printString;
 	}
@@ -414,6 +461,56 @@ public class RandomBoard {
 		}
 		
 		return type;
+	}
+	
+	private LogicTile getCenterTile(TileType centerType){
+		LogicTile tile = null;
+		if(centerType == TileType.CROSS){
+			tile = new LogicTile(centerType, true, true, true, true);
+		}else if(centerType == TileType.TEE){
+			double rn = Math.random();
+			if(rn < 0.25){
+				tile = new LogicTile(centerType, false, true, true, true);
+			}else if(rn < 0.5){
+				tile = new LogicTile(centerType, true, false, true, true);
+			}else if(rn < 0.75){
+				tile = new LogicTile(centerType, true, true, false, true);
+			}else{
+				tile = new LogicTile(centerType, true, true, true, false);
+			}
+			
+		}else if(centerType == TileType.BEND){
+			double rn = Math.random();
+			if(rn < 0.25){
+				tile = new LogicTile(centerType, true, true, false, false);
+			}else if(rn < 0.5){
+				tile = new LogicTile(centerType, false, true, true, false);
+			}else if(rn < 0.75){
+				tile = new LogicTile(centerType, true, false, false, true);
+			}else{
+				tile = new LogicTile(centerType, false, false, true, true);
+			}
+		}else if(centerType == TileType.STRAIGHT){
+			if(Math.random() < 0.5){
+				tile = new LogicTile(centerType, true, false, true, false);
+			}else{
+				tile = new LogicTile(centerType, false, true, true, false);
+			}
+		}else if(centerType == TileType.DEADEND){
+			double rn = Math.random();
+			if(rn < 0.25){
+				tile = new LogicTile(centerType, true, false, false, false);
+			}else if(rn < 0.5){
+				tile = new LogicTile(centerType, false, true, false, false);
+			}else if(rn < 0.75){
+				tile = new LogicTile(centerType, false, false, true, false);
+			}else{
+				tile = new LogicTile(centerType, false, false, false, true);
+			}
+		}else{
+			tile = new LogicTile(centerType, false, false, false, false);
+		}
+		return tile;
 	}
 	
 }

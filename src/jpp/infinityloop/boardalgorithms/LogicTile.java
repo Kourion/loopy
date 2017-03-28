@@ -8,7 +8,7 @@ public class LogicTile {
 	private boolean left = false, up = false, right = false, down = false;
 	
 	public LogicTile(TileType type, boolean left, boolean up, boolean right, boolean down) {
-		this.type = type;
+		this.setType(type);
 		this.left = left;
 		this.up = up;
 		this.right = right;
@@ -69,6 +69,14 @@ public class LogicTile {
 	 */
 	public void setDown(boolean down) {
 		this.down = down;
+	}
+
+	public TileType getType() {
+		return type;
+	}
+
+	public void setType(TileType type) {
+		this.type = type;
 	}
 
 }
