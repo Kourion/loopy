@@ -5,7 +5,7 @@ import jpp.infinityloop.gui.TileType;
 public class LogicTile {
 
 	private TileType type = TileType.EMPTY;
-	private boolean left = false, up = false, right = false, down = false;
+	private boolean left = false, up = false, right = false, down = false, switchedLR = false, switchedUD = false;
 	
 	public LogicTile(TileType type, boolean left, boolean up, boolean right, boolean down) {
 		this.setType(type);
@@ -77,6 +77,34 @@ public class LogicTile {
 
 	public void setType(TileType type) {
 		this.type = type;
+	}
+
+	/**
+	 * @return the switchedLR
+	 */
+	public boolean isSwitchedLR() {
+		return switchedLR;
+	}
+
+	/**
+	 * @param switchedLR the switchedLR to set
+	 */
+	public void setSwitchedLR(boolean switchedLR) {
+		this.switchedLR = switchedLR;
+	}
+
+	/**
+	 * @return the switchedUD
+	 */
+	public boolean isSwitchedUD() {
+		return switchedUD;
+	}
+
+	/**
+	 * @param switchedUD the switchedUD to set
+	 */
+	public void setSwitchedUD(boolean switchedUD) {
+		this.switchedUD = switchedUD;
 	}
 
 }

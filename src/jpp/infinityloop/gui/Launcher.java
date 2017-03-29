@@ -210,6 +210,7 @@ public class Launcher extends Application {
 			    arg0.setMinWidth(160*minWindowFactorTo16x9);
 			    arg0.setMinHeight(90*minWindowFactorTo16x9);
 			    
+			    /*
 			    if(arg0.isFullScreen()){
 			    	arg0.setFullScreen(false);
 			    	arg0.setFullScreen(true);
@@ -217,8 +218,8 @@ public class Launcher extends Application {
 			    	arg0.setFullScreen(true);
 			    	arg0.setFullScreen(false);
 			    }
-	    			
-	    		 }
+			    */	
+	    	}
 	    } );
 		
 		

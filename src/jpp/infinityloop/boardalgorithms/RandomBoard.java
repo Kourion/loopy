@@ -8,6 +8,7 @@ import jpp.infinityloop.gui.TileType;
 public class RandomBoard {
 
 	private int width = 0, height = 0, actualDeadEndEdges = 0, actualDeadEndCenter = 0;
+	private int balanceBEND = 0, balanceCROSS = 0, balanceDEADEND = 0, balanceSTRAIGHT = 0, balanceTEE = 0, balanceEMPTY = 0;
 	
 	public RandomBoard() {
 		
@@ -102,6 +103,7 @@ public class RandomBoard {
 	    for (int i = 1; i < rngH-1; i++) {
 			for (int j = 1; j < rngW-1; j++) {
 				array[i][j] = getCenterTile(getRandomCenterType());
+				filledTiles++;
 			}
 		}
 	    
@@ -109,7 +111,14 @@ public class RandomBoard {
 	    System.out.println("Expect "+supposedDeadEndEdges+" edge tiles to be dead ends."+" There are currently "+actualDeadEndEdges+" such tiles.");
 	    System.out.println("Expect "+supposedDeadEndCenter+" center tiles to be dead ends."+" There are currently "+actualDeadEndCenter +" such tiles.");
 	    
-	    array = createSolvedArray(array);
+	    balanceEMPTY = 0;
+	    balanceDEADEND = 0; //(actualDeadEndEdges - supposedDeadEndEdges) + (actualDeadEndCenter - supposedDeadEndCenter);
+	    
+	    array = rotateArrayToSolve(array);
+	    array = replaceCurves(array);
+	    System.out.println("BT2: "+ balanceTEE + " BC2: "+ balanceBEND);
+	    
+	    //array
 	    
 	    //Try to fix it with purposeful turns
 	    //Try to fix it with switching non-empty tiles with empty tiles
@@ -123,34 +132,263 @@ public class RandomBoard {
 		return board;
 	}
 	
-	private LogicTile[][] createSolvedArray(LogicTile[][] array){
-		for (int row = 0; row < height; row++) {		//MAYBE DO EDGES SEPERATELY?
+	private LogicTile[][] replaceCurves(LogicTile[][] array){
+		for (int row = 0; row < height; row++) {
 			for (int column = 0; column < width; column++) {
-				if(array[row][column].hasRight()){
-					if(column != width-1){
-						if(array[row][column].hasLeft()){
-						}else{
-							if(row == 0){
-								if(array[row][column].getType() == TileType.BEND){
-									array[row][column].setRight(false);
-									array[row][column].setLeft(true);
-								}else if(array[row][column].getType() == TileType.DEADEND){
-									array[row][column].setRight(false);
-									array[row][column].setLeft(true);
-								}
-							}else if(row == height-1){
-								
-							}else{
-								if(array[row][column].getType() == TileType.BEND){
-									array[row][column].setRight(false);
-									array[row][column].setLeft(true);
-								}
+				if(array[row][column].getType() == TileType.BEND){
+					if(column == 0 && row != 0 && row != height-1){
+						if(array[row+1][column].hasUp() && array[row-1][column].hasDown() && array[row][column+1].hasLeft() ){
+							array[row][column].setUp(true);
+							array[row][column].setDown(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}
+						//TODO continue replace curves, with straights, afterwards implement replace straights and tees with curves
+					}else if(column == width-1 && row != 0 && row != height-1){
+						if(array[row+1][column].hasUp() && array[row-1][column].hasDown() && array[row][column-1].hasRight() ){
+							array[row][column].setUp(true);
+							array[row][column].setDown(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}
+					}else if(row == 0 && column != 0 && column != width-1){
+						if(array[row][column+1].hasLeft() && array[row+1][column].hasUp() && array[row][column-1].hasRight() ){
+							array[row][column].setLeft(true);
+							array[row][column].setRight(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}
+					}else if(row == height-1 && column != 0 && column != width-1){
+						if(array[row][column+1].hasLeft() && array[row][column-1].hasRight() && array[row-1][column].hasDown() ){
+							array[row][column].setLeft(true);
+							array[row][column].setRight(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}
+					}else if(column != 0 && column != width-1 && row != 0 && row != height-1){
+						if(!array[row][column+1].hasLeft() && array[row+1][column].hasUp() && array[row][column-1].hasRight() && array[row-1][column].hasDown() ){
+							array[row][column].setLeft(true);
+							array[row][column].setUp(true);
+							array[row][column].setRight(false);
+							array[row][column].setDown(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}else if(array[row][column+1].hasLeft() && !array[row+1][column].hasUp() && array[row][column-1].hasRight() && array[row-1][column].hasDown() ){
+							array[row][column].setLeft(true);
+							array[row][column].setUp(true);
+							array[row][column].setRight(true);
+							array[row][column].setDown(false);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}else if(array[row][column+1].hasLeft() && array[row+1][column].hasUp() && !array[row][column-1].hasRight() && array[row-1][column].hasDown() ){
+							array[row][column].setLeft(false);
+							array[row][column].setUp(true);
+							array[row][column].setRight(true);
+							array[row][column].setDown(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}else if(array[row][column+1].hasLeft() && array[row+1][column].hasUp() && array[row][column-1].hasRight() && !array[row-1][column].hasDown() ){
+							array[row][column].setLeft(true);
+							array[row][column].setUp(false);
+							array[row][column].setRight(true);
+							array[row][column].setDown(true);
+							array[row][column].setType(TileType.TEE);
+							balanceTEE++;
+							balanceBEND--;
+						}
+					}
+				}
+			}
+		}
+		return array;
+	}
+	
+	private LogicTile[][] rotateArrayToSolve(LogicTile[][] array){
+		for (int row = 0; row < height; row++) {
+			for (int column = 0; column < width; column++) {
+				
+				/** Check right.**/
+				if(array[row][column].hasRight() &&column+1 != width-1 ){
+					//Turn to right if possible.
+					if(!array[row][column+1].hasLeft()){ 
+						if(row == 0 || row == height-1){
+							if(array[row][column+1].getType() == TileType.BEND && !array[row][column+1].isSwitchedLR()){
+								array[row][column+1].setRight(false);
+								array[row][column+1].setLeft(true);
+								array[row][column+1].setSwitchedLR(true);
+							}else if(array[row][column+1].getType() == TileType.DEADEND && !array[row][column+1].isSwitchedLR() && array[row][column+1].hasRight() ){
+								array[row][column+1].setRight(false);
+								array[row][column+1].setLeft(true);
+								array[row][column+1].setSwitchedLR(true);
 							}
+						}else{
+							if(array[row][column+1].getType() == TileType.BEND && !array[row][column+1].isSwitchedLR()){
+								array[row][column+1].setRight(false);
+								array[row][column+1].setLeft(true);
+								array[row][column+1].setSwitchedLR(true);
+							}else if(array[row][column+1].getType() == TileType.DEADEND && !array[row][column+1].isSwitchedLR() && array[row][column+1].hasRight() ){
+								array[row][column+1].setRight(false);
+								array[row][column+1].setLeft(true);
+								array[row][column+1].setSwitchedLR(true);
+							}else if(array[row][column+1].getType() == TileType.STRAIGHT && !array[row][column+1].isSwitchedLR()){
+								array[row][column+1].setRight(true);
+								array[row][column+1].setLeft(true);
+								array[row][column+1].setUp(false);
+								array[row][column+1].setDown(false);
+								array[row][column+1].setSwitchedLR(true);
+							}else if(array[row][column+1].getType() == TileType.TEE && !array[row][column+1].isSwitchedLR()){
+								if(array[row][column+1].hasUp()&&array[row][column+1].hasRight()&&array[row][column+1].hasDown()){
+									array[row][column+1].setRight(false);
+									array[row][column+1].setLeft(true);
+									array[row][column+1].setSwitchedLR(true);
+								}
+								
+							}
+						}
+					}
+				}
+				
+				/** Check left. **/
+				if(array[row][column].hasLeft() && column-1 != 0 ){
+					//Turn to left if possible.
+					if(!array[row][column-1].hasRight()){ 
+						if(row == 0 || row == height-1){
+							if(array[row][column-1].getType() == TileType.BEND && !array[row][column-1].isSwitchedLR()){
+								array[row][column-1].setRight(true);
+								array[row][column-1].setLeft(false);
+								array[row][column-1].setSwitchedLR(true);
+							}else if(array[row][column-1].getType() == TileType.DEADEND && !array[row][column-1].isSwitchedLR() && array[row][column-1].hasLeft() ){
+								array[row][column-1].setRight(true);
+								array[row][column-1].setLeft(false);
+								array[row][column-1].setSwitchedLR(true);
+							}
+						}else{
+							if(array[row][column-1].getType() == TileType.BEND && !array[row][column-1].isSwitchedLR()){
+								array[row][column-1].setRight(true);
+								array[row][column-1].setLeft(false);
+								array[row][column-1].setSwitchedLR(true);
+							}else if(array[row][column-1].getType() == TileType.DEADEND && !array[row][column-1].isSwitchedLR() && array[row][column-1].hasLeft() ){
+								array[row][column-1].setRight(true);
+								array[row][column-1].setLeft(false);
+								array[row][column-1].setSwitchedLR(true);
+							}else if(array[row][column-1].getType() == TileType.STRAIGHT && !array[row][column-1].isSwitchedLR() ){
+								array[row][column-1].setRight(true);
+								array[row][column-1].setLeft(true);
+								array[row][column-1].setUp(false);
+								array[row][column-1].setDown(false);
+								array[row][column-1].setSwitchedLR(true);
+							}else if(array[row][column-1].getType() == TileType.TEE && !array[row][column-1].isSwitchedLR()){
+								if(array[row][column-1].hasUp()&&array[row][column-1].hasLeft()&&array[row][column-1].hasDown()){
+									array[row][column-1].setRight(true);
+									array[row][column-1].setLeft(false);
+									array[row][column-1].setSwitchedLR(true);
+								}
+								
+							}
+						}
+					}
+				}
+				
+				/** Check up. **/
+				if(array[row][column].hasUp() ){ //&& row != 0  //check should not be needed as row0 should never have an up
+					//Turn to down if possible.
+					if(!array[row-1][column].hasDown() && !array[row-1][column].isSwitchedUD()){ 
+						if(column == 0 || column == width-1){
+							if(array[row-1][column].getType() == TileType.BEND ){
+								array[row-1][column].setUp(false);
+								array[row-1][column].setDown(true);
+								array[row-1][column].setSwitchedUD(true);
+							}else if(array[row-1][column].getType() == TileType.DEADEND && array[row-1][column].hasUp() ){
+								array[row-1][column].setUp(false);
+								array[row-1][column].setDown(true);
+								array[row-1][column].setSwitchedUD(true);
+							}
+						}else{
+							if(array[row-1][column].getType() == TileType.BEND ){
+								array[row-1][column].setUp(false);
+								array[row-1][column].setDown(true);
+								array[row-1][column].setSwitchedUD(true);
+							}else if(array[row-1][column].getType() == TileType.DEADEND && array[row-1][column].hasUp() ){
+								array[row-1][column].setUp(false);
+								array[row-1][column].setDown(true);
+								array[row-1][column].setSwitchedUD(true);
+							}else if(array[row-1][column].getType() == TileType.STRAIGHT ){
+								array[row-1][column].setRight(false);
+								array[row-1][column].setLeft(false);
+								array[row-1][column].setUp(false);
+								array[row-1][column].setDown(true);
+								array[row-1][column].setSwitchedUD(true);
+							}else if(array[row-1][column].getType() == TileType.TEE ){
+								if(array[row-1][column].hasUp()&&array[row-1][column].hasRight()&&array[row-1][column].hasLeft()){
+									array[row-1][column].setUp(false);
+									array[row-1][column].setDown(true);
+									array[row-1][column].setSwitchedUD(true);
+								}
+								
+							}
+						}
+					}
+				}
+				
+				/** Check down. **/	
+				if(array[row][column].hasDown() ){ //&& row != 0  //check should not be needed as row0 should never have an up
+					//Turn to down if possible.
+					if(row == 9){
+						System.out.println("R: "+row+" C: "+column);
+					}try {
+						
 
+					System.out.println(row+1);
+					if(!array[row+1][column].hasUp() && !array[row+1][column].isSwitchedUD()){ 
+						if(column == 0 || column == width-1){
+							if(array[row+1][column].getType() == TileType.BEND ){
+								array[row+1][column].setUp(true);
+								array[row+1][column].setDown(false);
+								array[row+1][column].setSwitchedUD(true);
+							}else if(array[row+1][column].getType() == TileType.DEADEND && array[row+1][column].hasDown() ){
+								array[row+1][column].setUp(true);
+								array[row+1][column].setDown(false);
+								array[row+1][column].setSwitchedUD(true);
+							}
+						}else{
+							if(array[row+1][column].getType() == TileType.BEND ){
+								array[row+1][column].setUp(true);
+								array[row+1][column].setDown(false);
+								array[row+1][column].setSwitchedUD(true);
+							}else if(array[row+1][column].getType() == TileType.DEADEND && array[row+1][column].hasDown() ){
+								array[row+1][column].setUp(true);
+								array[row+1][column].setDown(false);
+								array[row+1][column].setSwitchedUD(true);
+							}else if(array[row+1][column].getType() == TileType.STRAIGHT ){
+								array[row+1][column].setRight(false);
+								array[row+1][column].setLeft(false);
+								array[row+1][column].setUp(true);
+								array[row+1][column].setDown(true);
+								array[row+1][column].setSwitchedUD(true);
+							}else if(array[row+1][column].getType() == TileType.TEE ){
+								if(array[row+1][column].hasLeft()&&array[row+1][column].hasRight()&&array[row+1][column].hasDown()){
+									array[row+1][column].setUp(true);
+									array[row+1][column].setDown(false);
+									array[row+1][column].setSwitchedUD(true);
+								}
+								
+							}
 						}
 					}
 					
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
+				
+				
 			}
 		}
 		return array;
