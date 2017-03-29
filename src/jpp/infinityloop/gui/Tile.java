@@ -1,7 +1,6 @@
 package jpp.infinityloop.gui;
 
 import java.io.File;
-
 import javafx.scene.control.Button;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
@@ -69,7 +68,8 @@ public class Tile extends Button{
 				break;
 				
 			case CROSS:
-				this.setRotate(this.getRotate()+90);
+				//this.setRotate(this.getRotate()+45); //TODO animate?
+				
 				break;
 				
 			case DEADEND:

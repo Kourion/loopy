@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -83,6 +81,7 @@ public class Launcher extends Application {
 	    arg0.show();
 	    
 	    newGame(menuPane, arg0);
+	    
 	    //System.exit(-1); //TODO REMOVE
 	}
 
@@ -220,8 +219,10 @@ public class Launcher extends Application {
 			    }
 			    */	
 	    	}
+	    	
 	    } );
 		
+		((ButtonBase) menuPane.getChildren().get(1)).fire();
 		
 	}
 	
