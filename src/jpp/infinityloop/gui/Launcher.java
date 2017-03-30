@@ -6,8 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -84,6 +82,7 @@ public class Launcher extends Application {
 	    arg0.show();
 	    
 	    newGame(menuPane, arg0);
+	    
 	    //System.exit(-1); //TODO REMOVE
 	}
 
@@ -93,6 +92,8 @@ public class Launcher extends Application {
 
 	public void newGame(ButtonPane menuPane, Stage arg0){
 		//menuPane = new ButtonPane();
+		
+		/** 0:LoadFile 1:RandomBoard 2:SolveBoard 3:SaveBoard 4:ToggleBoard **/
 		((ButtonBase) menuPane.getChildren().get(0)).setOnAction(new EventHandler<ActionEvent>(){ 
 	    	@SuppressWarnings("resource")
 			@Override
@@ -145,6 +146,7 @@ public class Launcher extends Application {
 						    arg0.setMinWidth(160*minWindowFactorTo16x9);
 						    arg0.setMinHeight(90*minWindowFactorTo16x9);
 						    
+						    /*
 						    if(arg0.isFullScreen()){
 						    	arg0.setFullScreen(false);
 						    	arg0.setFullScreen(true);
@@ -152,7 +154,7 @@ public class Launcher extends Application {
 						    	arg0.setFullScreen(true);
 						    	arg0.setFullScreen(false);
 						    }
-						    
+						    */
 						    //arg0.setFullScreen(true);
 						    //arg0.sizeToScene();
 						    //arg0.show();
@@ -182,7 +184,7 @@ public class Launcher extends Application {
 	    		
 	    		BorderPane border = new BorderPane();
 				
-			    Board board = rdm.createRandomBoard();
+			    Board board = rdm.createRandomBoard(0, 0, 0, 0);
 			    
 				gameinterface = new GameInterfacePane(windowWidth-3, windowHeight-3, board); //windowWidth-3, windowHeight-3, reader.rowCount, reader.columnCount, reader.t
 				border.setCenter(gameinterface);
@@ -211,6 +213,7 @@ public class Launcher extends Application {
 			    arg0.setMinWidth(160*minWindowFactorTo16x9);
 			    arg0.setMinHeight(90*minWindowFactorTo16x9);
 			    
+			    /*
 			    if(arg0.isFullScreen()){
 			    	arg0.setFullScreen(false);
 			    	arg0.setFullScreen(true);
@@ -218,8 +221,9 @@ public class Launcher extends Application {
 			    	arg0.setFullScreen(true);
 			    	arg0.setFullScreen(false);
 			    }
-	    			
-	    		 }
+			    */	
+	    	}
+	    	
 	    } );
 		
 		((ButtonBase) menuPane.getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
@@ -232,6 +236,18 @@ public class Launcher extends Application {
 			
 		});
 		
+		//toggleColorButton
+		((ButtonBase) menuPane.getChildren().get(4)).setOnAction(new EventHandler<ActionEvent>(){ 
+	    	@Override
+	    	public void handle(ActionEvent event) {
+	    		gameinterface.toggleColor(false); //Allow a color change before the game is finished or not. //Does not work properly
+	    		
+	    	}
+	    	
+	    } );
+		
+		
+		((ButtonBase) menuPane.getChildren().get(1)).fire();
 		
 	}
 	

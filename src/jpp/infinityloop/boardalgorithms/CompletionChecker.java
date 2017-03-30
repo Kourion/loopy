@@ -95,4 +95,80 @@ public class CompletionChecker {
 		//System.out.println(isCompleted);
 		return isCompleted;
 	}
+
+	public static boolean isProper(LogicTile[][] array, int rows, int columns) {
+		
+		boolean isProper = true;
+		
+		for (int currRow = 0; currRow < rows; currRow++) {
+			for (int currColumn = 0; currColumn < columns; currColumn++) {
+				//System.out.println("CR: " + currRow + " CC: " +currColumn + " Pos: " + ((columns*currRow)+currColumn) );
+				
+				/** CHECK UP **/
+				if( array[currRow][currColumn].hasUp() ){
+					try { //5 6
+						if(currRow != 0){
+							if( array[currRow-1][currColumn].hasDown()){
+							}else{
+								isProper = false;
+							}
+						}
+					} catch (Exception e) {
+						isProper = false;
+						//System.out.println("Cant find location: " + ((columns*(currRow-1))+currColumn) );
+					}
+				}
+				
+				/** CHECK RIGHT **/
+				if( array[currRow][currColumn].hasRight() ){
+					try {
+						if(currColumn != columns-1){
+							if( array[currRow][currColumn+1].hasLeft()	){	
+							}else{
+								isProper = false;
+							}
+						}
+					} catch (Exception e) {
+						isProper = false;
+						//System.out.println("Cant find location: " + ((columns*(currRow))+currColumn+1) );
+					}
+				}
+				
+				/** CHECK DOWN **/
+				if( array[currRow][currColumn].hasDown() ){
+					try {
+						if(currRow != rows-1){
+							if( array[currRow+1][currColumn].hasUp()){
+							}else{
+								isProper = false;
+							}
+						}
+						
+					} catch (Exception e) {
+						isProper = false;
+						//System.out.println("Cant find location: " + ((columns*(currRow+1))+currColumn) );
+					}
+				}
+				
+				/** CHECK LEFT **/
+				if( array[currRow][currColumn].hasLeft() ){
+					try {
+						if(currColumn != 0){
+							if( array[currRow][currColumn-1].hasRight() ){
+							}else{
+								isProper = false;
+							}
+						}
+					} catch (Exception e) {
+						isProper = false; 
+						//System.out.println("Cant find location: " + ((columns*currRow)+(currColumn-1)) );
+					}
+				}
+				
+				/** CHECK FINISHED **/
+			}
+		}
+		
+		return isProper;
+	}
 }
