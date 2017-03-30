@@ -4,15 +4,9 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.Stack;
-
-import javafx.animation.PauseTransition;
 import javafx.animation.RotateTransition;
-import javafx.scene.Node;
 import javafx.util.Duration;
-import jpp.infinityloop.boardalgorithms.CompletionChecker;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.gui.Tile;
 import jpp.infinityloop.gui.TileType;
@@ -111,7 +105,7 @@ public class Solver {
 			// actualTileRot);
 			for (int i = actualTileRot; i < 4; i++) {
 				// System.out.println("rotating");
-				actualTile.rotateTile();
+				actualTile.rotateTile(false);
 			}
 			if (prevStep.triedAll()) {
 				return prevStep.revertStep();
@@ -164,7 +158,7 @@ public class Solver {
 			rt.setCycleCount(1);
 			rt.play();
 			// if(actualTile != null) {
-			actualTile.rotateTile();
+			actualTile.rotateTile(false);
 			//actualTile.fire();
 			actualTileRot += 1;
 			if(isTilePointingOutward()) {

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import jpp.infinityloop.boardalgorithms.CompletionChecker;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.gui.Tile;
 import jpp.infinityloop.gui.TileType;
@@ -47,7 +46,7 @@ public class SolverOLD {
 			int triedRots = 1;
 			if (testedRot.containsKey(actTile)) {
 				triedRots = testedRot.get(actTile) + 1;
-				actTile.rotateTile();
+				actTile.rotateTile(false);
 				System.out.println("again rot Tile: " + actTile + " = fitted: " + tileFitted + " = rotcount: " + triedRots);
 
 			}
@@ -60,7 +59,7 @@ public class SolverOLD {
 
 			
 			while (triedRots < 5 && !tileFitted) { // try until all 4 rotations were tested, or tile fits
-				actTile.rotateTile();
+				actTile.rotateTile(false);
 				tileFitted = testFit(actTile, setNeighbours);
 				triedRots++;
 				//System.out.println("Rotating Tile: " + actTile + " = fitted: " + tileFitted + " = rotcount: " + triedRots);

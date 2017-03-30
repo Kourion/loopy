@@ -7,10 +7,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -38,9 +36,12 @@ public class GuiControl {
 	 */
 	public void setTileButtonLogic(Tile tileButton, FlowPane flowgrid, int columnCount, int rowCount){
 		tileButton.setOnAction(new EventHandler<ActionEvent>(){
+			
 			@Override
 			public void handle(ActionEvent event) { 
-				tileButton.rotateTile();
+				
+				tileButton.rotateTile(true);
+				
 				statusProperty.set(CompletionChecker.isComplete(flowgrid, columnCount, rowCount));
 				statusProperty.setValue(CompletionChecker.isComplete(flowgrid, columnCount, rowCount));
 				colorFlowgrid = flowgrid;

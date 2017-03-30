@@ -1,22 +1,25 @@
 package jpp.infinityloop.gui;
 
 import java.io.File;
+
+import javafx.animation.RotateTransition;
 import javafx.scene.control.Button;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 public class Tile extends Button{
 
 	Image icon = new Image(getClass().getResource("tileicons"+ File.separator + "bend.png").toExternalForm() );
 	TileType type = TileType.EMPTY;
-	boolean up = false, right = false, down = false, left = false;
-	int column = 0, row = 0;
+	private boolean up = false, right = false, down = false, left = false, first = true;
+	private int column = 0, row = 0, crossRot, blendMode = 0, pastRotations = 0, deadendRot = 0, straightRot = 0, teeRot = 0;
 	private ImageView tileImageView;
 	private StyleType coloring = StyleType.AliceBlue;
 	private String hexColor = "#000000";
 	private boolean hasHexColor = false;
-	private int blendMode = 0;
+	RotateTransition rt = null;
 	
 	public Tile(TileType type, Image icon, StyleType newStyle, boolean up, boolean right, boolean down, boolean left, int column, int row, int blendMode){
 		super();
@@ -37,105 +40,264 @@ public class Tile extends Button{
 		this.setGraphic(getTileImageView());
 		
 		//Rotation of the tile 4 times ensures its proper direction on game start.
-		this.rotateTile();
-		this.rotateTile();
-		this.rotateTile();
-		this.rotateTile();
+		this.rotateTile(false);
+		this.rotateTile(false);
+		this.rotateTile(false);
+		this.rotateTile(false);
 	}
 	
-	public void rotateTile(){
+	public void rotateTile(boolean onStage){
 		switch (type){
 			case BEND:
 				if(up&&right){
 					up = false;
 					down = true;
-					this.setRotate(180);
+					if(onStage){	
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(180+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(180+pastRotations);
 				}else if(right&&down){
 					right = false;
 					left = true;
-					this.setRotate(270);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(270+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(270+pastRotations);
 				}else if(down&&left){
 					down = false;
 					up = true;
-					this.setRotate(360);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(360+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(360+pastRotations);
+					rotCtr();
 				}
 				else if(left&&up){
 					left = false;
 					right = true;
-					this.setRotate(90);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(90+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(90+pastRotations);
 					//this.setRotate(this.getRotate()+90);
 				}
 				break;
 				
 			case CROSS:
-				//this.setRotate(this.getRotate()+45); //TODO animate?
+				
+				if(onStage){
+					rt = new RotateTransition(Duration.millis(200), this);
+					rt.setToAngle(90+crossRot);
+					rt.setCycleCount(1);
+					rt.play();
+				}
+				this.setRotate(90+crossRot);
+				
+				crossRot = crossRot+90;
+				
+				//this.setRotate(this.getRotate()+pastRotations); //TODO animate?
 				
 				break;
 				
 			case DEADEND:
+				
+				//System.out.println(pastRotations+" "+left+" "+up+" "+" "+right+" "+down);
+				
 				if(left){
+					if(first){ pastRotations = 360; first = false; deadendRot = 0; }
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(90+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+						//deadendRot++;
+					}
+					deadendRot++;
 					left = false;
 					up = true;
-					this.setRotate(90);
+					this.setRotate(90+pastRotations);
 				}else if(up){
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(180+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+						//deadendRot++;
+					}
+					deadendRot++;
 					up = false;
 					right = true;
-					this.setRotate(180);
+					this.setRotate(180+pastRotations);
 				}else if(right){
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(270+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+						//deadendRot++;
+					}
+					deadendRot++;
 					right = false;
 					down = true;
-					this.setRotate(270);
+					this.setRotate(270+pastRotations);
 				}else if(down){
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(360+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+						//deadendRot++;
+					}
+					deadendRot++;
 					down = false;
 					left = true;
-					this.setRotate(360);
+					this.setRotate(360+pastRotations);
 				}
+				if(deadendRot == 4){
+					pastRotations = pastRotations+360;
+					deadendRot = 0;
+				}
+				
 				//this.setRotate(this.getRotate()+90);
 				break;
 				
 			case STRAIGHT:
 				if(left && right){
+					
 					left = false;
 					right = false;
 					up = true;
 					down = true;
-					if(this.getRotate() == 0 || this.getRotate() == 360){
-						this.setRotate(90);
-					}else if(this.getRotate() == 180){
-						this.setRotate(270);
+					if(this.getRotate() == 0 + pastRotations ){
+						if(first){ pastRotations = 360; first = false; deadendRot = 0; }
+						if(onStage){
+							rt = new RotateTransition(Duration.millis(200), this);
+							rt.setToAngle(90+pastRotations);
+							rt.setCycleCount(1);
+							rt.play();
+							//deadendRot++;
+						}
+						this.setRotate(90+pastRotations);
+						straightRot++;
+					}else if(this.getRotate() == 180 + pastRotations){
+						if(onStage){
+							rt = new RotateTransition(Duration.millis(200), this);
+							rt.setToAngle(270+pastRotations);
+							rt.setCycleCount(1);
+							rt.play();
+							//deadendRot++;
+						}
+						this.setRotate(270+pastRotations);
+						straightRot++;
 					}
 				}else if(up && down){
 					up = false;
 					down = false;
 					left = true;
 					right = true;
-					if(this.getRotate() == 90){
-						this.setRotate(180);
-					}else if(this.getRotate() == 270){
-						this.setRotate(360);
+					if(this.getRotate() == 90 + pastRotations){
+						if(onStage){
+							rt = new RotateTransition(Duration.millis(200), this);
+							rt.setToAngle(180+pastRotations);
+							rt.setCycleCount(1);
+							rt.play();
+							//deadendRot++;
+						}
+						this.setRotate(180+pastRotations);
+						straightRot++;
+					}else if(this.getRotate() == 270+pastRotations){
+						if(onStage){
+							rt = new RotateTransition(Duration.millis(200), this);
+							rt.setToAngle(360+pastRotations);
+							rt.setCycleCount(1);
+							rt.play();
+						}
+						this.setRotate(360+pastRotations);
+						straightRot++;
 					}
+				}
+				
+				if(straightRot == 4){
+					pastRotations = pastRotations+360;
+					straightRot = 0;
 				}
 				
 				break;
 				
 			case TEE:
+				if(onStage){
+					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
+				}
 				if(left && up && right){
+					
 					left = false;
 					down = true;
-					this.setRotate(90);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(90+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(90+pastRotations);
+					teeRot++;
 				}else if(up && right && down){
 					up = false;
 					left = true;
-					this.setRotate(180);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(180+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(180+pastRotations);
+					teeRot++;
 				}else if(right && down && left){
 					right = false;
 					up = true;
-					this.setRotate(270);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(270+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(270+pastRotations);
+					teeRot++;
 				}else if(down && left && up){
+					
 					down = false;
 					right = true;
-					this.setRotate(360);
+					if(onStage){
+						rt = new RotateTransition(Duration.millis(200), this);
+						rt.setToAngle(360+pastRotations);
+						rt.setCycleCount(1);
+						rt.play();
+					}
+					this.setRotate(360+pastRotations);
+					teeRot++;
+					if(first){ pastRotations = 360; first = false; teeRot = 0; }
 				}
+				
+				if(teeRot == 4){
+					pastRotations = pastRotations+360;
+					teeRot = 0;
+				}
+				
+				if(onStage){
+					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
+				}
+				
 				//this.setRotate(this.getRotate()+90);
 				break;
 				
@@ -466,5 +628,16 @@ public class Tile extends Button{
 		String res = "Tile: " + this.type + "; Pos: " + this.row + ", " + this.column;
 		res +=  "; Conns: " + hasLeft()+hasUp()+hasRight()+hasDown();
 		return res;
+	}
+
+	public int getPastRotations() {
+		return pastRotations;
+	}
+
+	/**
+	 * @param pastRotations the pastRotations to set
+	 */
+	public void rotCtr() {
+		this.pastRotations = this.pastRotations + 360;
 	}
 }
