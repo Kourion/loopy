@@ -360,7 +360,8 @@ public class GameInterfacePane extends Pane{
 		return (Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col );
 	}
 	
-	public int getTileCol(Tile tile) {
-		return 0;
+	public Pane getPane() {
+		return flowgrid;
 	}
+	
 }

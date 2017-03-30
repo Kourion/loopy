@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
-import jpp.infinityloop.solver.Solver;
 
 public class ButtonPane extends FlowPane{
 
@@ -52,15 +51,7 @@ public class ButtonPane extends FlowPane{
 		solveBoardButton.setGraphic(solveBoardIcon);
 		solveBoardButton.setStyle("-fx-background-color: " + style + "; -fx-border-color: " + style + "; -fx-focus-color:  " + style + ";"
 				+ " -fx-faint-focus-color:  " + style + " ;");
-		solveBoardButton.setOnAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent arg0) {
-				Solver solver = new Solver(board);
-				solver.solve();
-			}
-			
-		});
+		
 		
 		Button saveBoardButton = new Button();
 		saveBoardButton.setMinSize(32, 32);

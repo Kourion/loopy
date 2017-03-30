@@ -461,5 +461,10 @@ public class Tile extends Button{
 	}
 
 
-	
+	@Override
+	public String toString() {
+		String res = "Tile: " + this.type + "; Pos: " + this.row + ", " + this.column;
+		res +=  "; Conns: " + hasLeft()+hasUp()+hasRight()+hasDown();
+		return res;
+	}
 }

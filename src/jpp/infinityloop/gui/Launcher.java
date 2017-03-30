@@ -26,6 +26,7 @@ import jpp.infinityloop.board.Board;
 import jpp.infinityloop.boardalgorithms.RandomBoard;
 import jpp.infinityloop.readwrite.InfinityLoopReader;
 import jpp.infinityloop.readwrite.InfinityLoopWriter;
+import jpp.infinityloop.solver.Solver;
 
 public class Launcher extends Application {
 
@@ -220,6 +221,16 @@ public class Launcher extends Application {
 	    			
 	    		 }
 	    } );
+		
+		((ButtonBase) menuPane.getChildren().get(2)).setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent arg0) {
+				Solver solver = new Solver(gameinterface);
+				solver.solve();
+			}
+			
+		});
 		
 		
 	}
