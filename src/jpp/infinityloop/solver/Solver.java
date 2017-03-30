@@ -8,7 +8,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
 import javafx.scene.Node;
+import javafx.util.Duration;
 import jpp.infinityloop.boardalgorithms.CompletionChecker;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.gui.Tile;
@@ -59,7 +62,11 @@ public class Solver {
 
 			}
 		}
-		CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),board.getRowCount());
+		//CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),board.getRowCount());
+		Tile aTile = board.getTile(0, 0);
+		for(int i = 0; i < 4; i++) { // fire a button for times, to get the board to check for completion
+			aTile.fire();
+		}
 	}
 
 	private class Step {
@@ -152,9 +159,13 @@ public class Solver {
 			if (actualTile == null) {
 				System.err.println("getNextConfigStep: tried to get next config for: " + this);
 			}
+			RotateTransition rt = new RotateTransition(Duration.millis(500), actualTile);
+			rt.setByAngle(90);
+			rt.setCycleCount(1);
+			rt.play();
 			// if(actualTile != null) {
-			//actualTile.rotateTile();
-			actualTile.fire();
+			actualTile.rotateTile();
+			//actualTile.fire();
 			actualTileRot += 1;
 			if(isTilePointingOutward()) {
 				return getNextConfigStep();
