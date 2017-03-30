@@ -320,7 +320,7 @@ public class GuiControl {
     }
     
     public void toggleColor(boolean force){
-    	System.out.println("HE1 "+complete+" "+colorEnabledAdjustment);
+    	//System.out.println("HE1 "+complete+" "+colorEnabledAdjustment);
     	if(force){
     		forceColor = true;
     		if(colorForceAllowed){
