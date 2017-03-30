@@ -159,10 +159,6 @@ public class Solver {
 			if (actualTile == null) {
 				System.err.println("getNextConfigStep: tried to get next config for: " + this);
 			}
-			RotateTransition rt = new RotateTransition(Duration.millis(500), actualTile);
-			rt.setByAngle(90);
-			rt.setCycleCount(1);
-			rt.play();
 			// if(actualTile != null) {
 			actualTile.rotateTile();
 			//actualTile.fire();

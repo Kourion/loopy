@@ -1,10 +1,13 @@
 package jpp.infinityloop.gui;
 
 import java.io.File;
+
+import javafx.animation.RotateTransition;
 import javafx.scene.control.Button;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 public class Tile extends Button{
 
@@ -37,6 +40,7 @@ public class Tile extends Button{
 		this.setGraphic(getTileImageView());
 		
 		//Rotation of the tile 4 times ensures its proper direction on game start.
+		transitionRotate(0, 0);
 		this.rotateTile();
 		this.rotateTile();
 		this.rotateTile();
@@ -49,19 +53,24 @@ public class Tile extends Button{
 				if(up&&right){
 					up = false;
 					down = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(180);
+					//transitionRotate(90);
 				}else if(right&&down){
 					right = false;
 					left = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(270);
 				}else if(down&&left){
 					down = false;
 					up = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(360);
 				}
 				else if(left&&up){
 					left = false;
 					right = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(90);
 					//this.setRotate(this.getRotate()+90);
 				}
@@ -69,25 +78,29 @@ public class Tile extends Button{
 				
 			case CROSS:
 				//this.setRotate(this.getRotate()+45); //TODO animate?
-				
+				transitionRotate(this.getRotate()+90, 500);
 				break;
 				
 			case DEADEND:
 				if(left){
 					left = false;
 					up = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(90);
 				}else if(up){
 					up = false;
 					right = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(180);
 				}else if(right){
 					right = false;
 					down = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(270);
 				}else if(down){
 					down = false;
 					left = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(360);
 				}
 				//this.setRotate(this.getRotate()+90);
@@ -100,8 +113,10 @@ public class Tile extends Button{
 					up = true;
 					down = true;
 					if(this.getRotate() == 0 || this.getRotate() == 360){
+						transitionRotate(this.getRotate()+90, 500);
 						this.setRotate(90);
 					}else if(this.getRotate() == 180){
+						transitionRotate(this.getRotate()+90, 500);
 						this.setRotate(270);
 					}
 				}else if(up && down){
@@ -110,8 +125,10 @@ public class Tile extends Button{
 					left = true;
 					right = true;
 					if(this.getRotate() == 90){
+						transitionRotate(this.getRotate()+90, 500);
 						this.setRotate(180);
 					}else if(this.getRotate() == 270){
+						transitionRotate(this.getRotate()+90, 500);
 						this.setRotate(360);
 					}
 				}
@@ -122,18 +139,22 @@ public class Tile extends Button{
 				if(left && up && right){
 					left = false;
 					down = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(90);
 				}else if(up && right && down){
 					up = false;
 					left = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(180);
 				}else if(right && down && left){
 					right = false;
 					up = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(270);
 				}else if(down && left && up){
 					down = false;
 					right = true;
+					transitionRotate(this.getRotate()+90, 500);
 					this.setRotate(360);
 				}
 				//this.setRotate(this.getRotate()+90);
@@ -145,8 +166,16 @@ public class Tile extends Button{
 			default:
 				break;
 		}
+		//transitionRotate(this.getRotate(),this.getRotate()+90);
 	}
 
+	private void transitionRotate(double to, double dur) {
+		RotateTransition rt = new RotateTransition(Duration.millis(dur), this);
+		//rt.setFromAngle(from);
+		rt.setToAngle(to);
+		rt.setCycleCount(1);
+		rt.play();
+	}
 
 	/**
 	 * @return the icon of the tile
