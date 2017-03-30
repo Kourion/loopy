@@ -11,6 +11,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import jpp.infinityloop.board.Board;
+import jpp.infinityloop.boardalgorithms.LogicTile;
 
 /**
  * Displays the main game-interface, with which the game can be played.
@@ -380,6 +381,22 @@ public class GameInterfacePane extends Pane{
 	
 	public Tile getTile(int row, int col) {
 		return (Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col );
+	}
+	
+	public LogicTile[][] getLogicTiles() {
+		LogicTile[][] tiles = new LogicTile[getRowCount()][getColumnCount()];
+		for (int row = 0; row < getRowCount(); row++) {
+			for (int col = 0; col < getColumnCount(); col++) {
+				LogicTile tile = new LogicTile(TileType.EMPTY, false, false, false, false);
+				tile.setLeft(((Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col )).hasLeft());
+				tile.setUp(((Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col )).hasUp());
+				tile.setRight(((Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col )).hasRight());
+				tile.setDown(((Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col )).hasDown());
+				tile.setType(((Tile) flowgrid.getChildren().get( (getColumnCount()*row)+col )).getType());
+				tiles[row][col] = tile;
+			}
+		}
+		return tiles;
 	}
 	
 	public Pane getPane() {
