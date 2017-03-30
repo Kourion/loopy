@@ -8,6 +8,10 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
+import javafx.scene.Node;
+import javafx.util.Duration;
 import jpp.infinityloop.boardalgorithms.CompletionChecker;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.gui.Tile;
@@ -58,7 +62,11 @@ public class Solver {
 
 			}
 		}
-		CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),board.getRowCount());
+		//CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),board.getRowCount());
+		Tile aTile = board.getTile(0, 0);
+		for(int i = 0; i < 4; i++) { // fire a button for times, to get the board to check for completion
+			aTile.fire();
+		}
 	}
 
 	private class Step {
@@ -91,7 +99,11 @@ public class Solver {
 		}
 
 		public void fixRot() {
-			actualTileRot = 1;
+			if(actualTile.getType() == TileType.EMPTY || actualTile.getType() == TileType.CROSS) {
+				actualTileRot = 4;
+			} else {
+				actualTileRot = 1;
+			}
 		}
 
 		public Step revertStep() {
@@ -116,7 +128,11 @@ public class Solver {
 			setTiles.add(actTile);
 			this.nextTiles = new LinkedList<>();
 			nextTiles.addAll(nTiles);
-			actualTileRot = 1;
+			if(actualTile.getType() == TileType.EMPTY || actualTile.getType() == TileType.CROSS) {
+				actualTileRot = 4;
+			} else {
+				actualTileRot = 1;
+			}
 			this.prevStep = prevStep;
 		}
 
@@ -143,13 +159,45 @@ public class Solver {
 			if (actualTile == null) {
 				System.err.println("getNextConfigStep: tried to get next config for: " + this);
 			}
+			RotateTransition rt = new RotateTransition(Duration.millis(500), actualTile);
+			rt.setByAngle(90);
+			rt.setCycleCount(1);
+			rt.play();
 			// if(actualTile != null) {
 			actualTile.rotateTile();
+			//actualTile.fire();
 			actualTileRot += 1;
+			if(isTilePointingOutward()) {
+				return getNextConfigStep();
+			}
 			// }
 			/// return new Step(actualTile, prevStep, setTiles, actualTileRot+1,
 			// nextTiles);
 			return this;
+		}
+
+		private boolean isTilePointingOutward() {
+			if(actualTile.getRow() == 0) {
+				if(actualTile.hasUp()) {
+					return true;
+				}
+			}
+			if(actualTile.getRow() == board.getRowCount()-1) {
+				if(actualTile.hasDown()) {
+					return true;
+				}
+			}
+			if(actualTile.getColumn() == 0) {
+				if(actualTile.hasLeft()) {
+					return true;
+				}
+			}
+			if(actualTile.getColumn() == board.getColumnCount()-1) {
+				if(actualTile.hasRight()) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public boolean triedAll() {
