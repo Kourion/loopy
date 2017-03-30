@@ -15,7 +15,7 @@ public class RandomBoard {
 		
 	}
 
-	public Board createRandomBoard(){
+	public Board createRandomBoard(int minWidth, int maxWidth, int minHeight, int maxHeight){
 		
 		boolean isProper = false;
 		LogicTile[][] array = null;
@@ -24,8 +24,16 @@ public class RandomBoard {
 		int rngH = 0;
 		
 		while(isProper == false){
-			rngW = ThreadLocalRandom.current().nextInt(8, 21); //51
-			rngH = ThreadLocalRandom.current().nextInt(5, 15); //51
+			if(minWidth != 0 && maxWidth != 0 && minHeight != 0 && maxHeight != 0){
+				rngW = ThreadLocalRandom.current().nextInt(minWidth, maxWidth); //51
+				rngH = ThreadLocalRandom.current().nextInt(minHeight, maxHeight); //51
+			}else{
+				rngW = ThreadLocalRandom.current().nextInt(8, 21); //51
+				rngH = ThreadLocalRandom.current().nextInt(5, 15); //51
+			}
+			
+			//rngW = 4;
+			//rngH = 4;
 			
 			actualDeadEndEdges = 0;
 			actualDeadEndCenter = 0;
@@ -38,7 +46,7 @@ public class RandomBoard {
 		    @SuppressWarnings("unused")
 			byte[] dataBytes = new byte[rngW*rngH];
 		    
-		    System.out.println("W: "+rngW+" H: "+rngH);
+		    //System.out.println("W: "+rngW+" H: "+rngH);
 		    
 		    array = new LogicTile[rngH][rngW];
 		    
@@ -52,10 +60,11 @@ public class RandomBoard {
 		   	int amountEdgeTiles = 2*(rngW-2)+2*(rngH-2);
 		   	int amountCenterTiles = (rngW-2)*(rngH-2);
 		   	double emptyTilesPercent = ((0.25*4+0.125*amountEdgeTiles+0.0625*amountCenterTiles)/(rngW*rngH));
-		   	int amountNonEmptyTiles = (int) (rngW*rngH*(1-emptyTilesPercent));
+		   	@SuppressWarnings("unused")
+			int amountNonEmptyTiles = (int) (rngW*rngH*(1-emptyTilesPercent));
 		   	@SuppressWarnings("unused")
 			int filledTiles = 0;
-		    System.out.println("Amount of non empty tiles: " + amountNonEmptyTiles);
+		    //System.out.println("Amount of non empty tiles: " + amountNonEmptyTiles);
 		   	
 		    @SuppressWarnings("unused")
 			int supposedDeadEndEdges = (int) (0.375*amountEdgeTiles);
@@ -111,7 +120,7 @@ public class RandomBoard {
 				filledTiles++;
 		    }
 		    
-		    //Generate center tiles
+		    /** Generate center tiles. **/
 		    for (int i = 1; i < rngH-1; i++) {
 				for (int j = 1; j < rngW-1; j++) {
 					array[i][j] = getCenterTile(getRandomCenterType());
@@ -130,6 +139,7 @@ public class RandomBoard {
 		    /** Fixing the random board to be solvable. **/
 		    array = rotateArrayToSolveByDirection(array);
 		    
+		    
 		    array = rotateArrayToSolveByType(array);
 			array = replaceCurves(array);
 		    
@@ -145,7 +155,7 @@ public class RandomBoard {
 			array = replaceDeadEnds(array);
 			array = rotateArrayToSolveByType(array);
 			
-		    for (int i = 0; i < 3; i++) {
+		    for (int i = 0; i < 1; i++) {
 				array = rotateArrayToSolveByType(array);
 				array = replaceCurves(array);
 				array = replaceStraights(array);
@@ -170,56 +180,95 @@ public class RandomBoard {
 		    array = replaceDeadEnds(array);
 		    array = rotateArrayToSolveByType(array);
 		    
-		    for (int i = 0; i < 4; i++) {
-		    	array = fillDeadEnds(array);
-			    array = replaceDeadEnds(array);
-			    array = rotateArrayToSolveByType(array);
-			    
-			    if(balanceBEND > 0){
-			    	for (int j = 0; j < balanceBEND; j++) {
-			    		array = deleteExcessBends(array);
-			    	}
-			    }
-			    if(balanceTEE > 0){
-			    	for (int j = 0; j < balanceTEE; j++) {
-			    		array = deleteExcessTees(array);
-			    	}
-			    }
-			    
-			    array = rotateArrayToSolveByType(array);
-				array = replaceCurves(array);
-				array = replaceStraights(array);
-				array = replaceTees(array);
-				array = replaceDeadEnds(array);
-				
-				array = fillDeadEnds(array);
-			    array = replaceDeadEnds(array);
-			    array = rotateArrayToSolveByType(array);
-			}
+		    isProper = CompletionChecker.isProper(array, height, width);
 		    
-		    for (int i = 0; i < 5; i++) {
-				array = fillDeadEnds(array);
-				array = replaceDeadEnds(array);
-			}
-	
+		    if(!isProper){
+		    	for (int i = 0; i < 4; i++) {
+			    	array = fillDeadEnds(array);
+				    array = replaceDeadEnds(array);
+				    array = rotateArrayToSolveByType(array);
+				    
+				    if(balanceBEND > 0){
+				    	for (int j = 0; j < balanceBEND; j++) {
+				    		array = deleteExcessBends(array);
+				    	}
+				    }
+				    if(balanceTEE > 0){
+				    	for (int j = 0; j < balanceTEE; j++) {
+				    		array = deleteExcessTees(array);
+				    	}
+				    }
+				    
+				    array = rotateArrayToSolveByType(array);
+					array = replaceCurves(array);
+					array = replaceStraights(array);
+					array = replaceTees(array);
+					array = replaceDeadEnds(array);
+					
+					array = fillDeadEnds(array);
+				    array = replaceDeadEnds(array);
+				    array = rotateArrayToSolveByType(array);
+				    isProper = CompletionChecker.isProper(array, height, width);
+				    if(isProper){
+				    	break;
+				    }
+				}
+		    }
+		    
+		    isProper = CompletionChecker.isProper(array, height, width);
+		    
+		    if(!isProper){
+			    for (int i = 0; i < 5; i++) {
+					array = fillDeadEnds(array);
+					array = replaceDeadEnds(array);
+					isProper = CompletionChecker.isProper(array, height, width);
+					if(isProper){
+				    	break;
+				    }
+				}
+		    }
+		    
 	    isProper = CompletionChecker.isProper(array, height, width);
 		}
 	
+		array = randomRotatedArray(array);
+		
 	    //System.out.println("BT: "+ balanceTEE + " BS: "+ balanceSTRAIGHT + " BC: "+ balanceBEND);
 	    System.out.println("Status cross: "+balanceCROSS+" tee: "+balanceTEE+" bend: "+balanceBEND+" straight: "+balanceSTRAIGHT+" deadend: "+balanceDEADEND+" empty: "+balanceEMPTY);
 	    
 	    checkErrorTypeDoesNotMatchBoolean(array);
-	    System.out.println(amountPerType(array));
+	    //System.out.println(amountPerType(array));
 	    //Try to fix it with purposeful turns
 	    //Try to fix it with switching non-empty tiles with empty tiles
 	    
-	    System.out.println(print(array));
+	    //System.out.println(print(array));
 	    //System.exit(-1);
 	    Board board = new Board(print(array), print(array), rngW, rngH);
 	    board.setTiledata(print(array));
 	    board.setColumns(rngW);
 	    board.setRows(rngH);
 		return board;
+	}
+	
+	private LogicTile[][] randomRotatedArray(LogicTile[][] array) {
+		for (int row = 0; row < height; row++) {
+			for (int column = 0; column < width; column++) {
+				double rn = Math.random();
+				if(rn < 0.25){
+					array[row][column].rotate();
+				}else if(rn < 0.5){
+					array[row][column].rotate();
+					array[row][column].rotate();
+				}else if(rn < 0.75){
+					array[row][column].rotate();
+					array[row][column].rotate();
+					array[row][column].rotate();
+				}else{
+					
+				}
+			}
+		}
+		return array;
 	}
 	
 	private LogicTile[][] fillDeadEnds(LogicTile[][] array) {
@@ -994,6 +1043,7 @@ public class RandomBoard {
 		return array;
 	}
 	
+	@SuppressWarnings("unused")
 	private String amountPerType(LogicTile[][] array){
 		String str = "";
 		int amBEND = 0, amCROSS = 0, amDEADEND = 0, amSTRAIGHT = 0, amTEE = 0, amEMPTY = 0;
@@ -2117,7 +2167,7 @@ public class RandomBoard {
 		return tile;
 	}
 	
-	private TileType getRandomCenterType(){
+	private TileType getRandomCenterType(){ //TODO TURN BACK OR FURTHER CHANGE PROPABILITIES
 		TileType type = TileType.EMPTY;
 		
 		double rn = Math.random();
@@ -2125,11 +2175,11 @@ public class RandomBoard {
 			type = TileType.CROSS;
 		}else if(rn < 0.3125){ 
 			type = TileType.TEE;
-		}else if(rn < 0.5625){
-			type = TileType.BEND;
-		}else if(rn < 0.6875){
-			type = TileType.STRAIGHT;
-		}else if(rn < 0.9375){
+		}else if(rn < (0.5625-0.05) ){
+			type = TileType.BEND; //0.5625
+		}else if(rn < (0.6875-0.1) ){
+			type = TileType.STRAIGHT; //0.9375
+		}else if(rn < (0.9375-0.05) ){
 			type = TileType.DEADEND;
 		    actualDeadEndCenter++;
 		}else{

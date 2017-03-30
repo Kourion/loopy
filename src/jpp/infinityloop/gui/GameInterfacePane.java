@@ -22,6 +22,8 @@ public class GameInterfacePane extends Pane{
 	private boolean isPredefinedBord = false, isRandomBord = false;
 	private StyleType currentStyle = StyleType.AliceBlue;
 	String color = "blue";
+	private FlowPane flowgrid = new FlowPane();
+	
 	public GameInterfacePane(){
 	}
 	
@@ -38,7 +40,7 @@ public class GameInterfacePane extends Pane{
 		}
 		
 		BorderPane displayPane = new BorderPane();
-		FlowPane flowgrid = new FlowPane();
+		flowgrid = new FlowPane();
 		
 		/** Pick a random coloring style for the board.Create icons and choose randomly between filled and non-filled versions, as well as a blend-mode. **/
 		currentStyle = randomStyle();
@@ -351,6 +353,25 @@ public class GameInterfacePane extends Pane{
 	 */
 	public int getColumnCount() {
 		return columnCount;
+	}
+
+	/**
+	 * @return the flowgrid of the current GameInterfacePane.
+	 */
+	public FlowPane getFlowgrid() {
+		return flowgrid;
+	}
+
+	/**
+	 * @param flowgrid the flowgrid to set GameInterfacePane to.
+	 */
+	public void setFlowgrid(FlowPane flowgrid) {
+		this.flowgrid = flowgrid;
+	}
+
+	public void toggleColor(boolean force) {
+		ctrl.toggleColor(force);
+		
 	}
 	
 	

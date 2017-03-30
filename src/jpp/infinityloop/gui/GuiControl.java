@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -25,19 +26,31 @@ public class GuiControl {
 	@SuppressWarnings("unused")
 	private double sceneWidth = 0, sceneHeight = 0;
 	
+	private FlowPane colorFlowgrid = new FlowPane();
+	private boolean complete = false, colorEnabledAdjustment = false, forceColor = false, colorForceAllowed = false;
+	private int columns = 0, rows = 0;
+	
 	/**
 	 * Logic for all tile Buttons
 	 * @param tileButton
 	 * @param flowgrid 
 	 */
-	public void setTileButtonLogic(Tile tileButton, Pane flowgrid, int columnCount, int rowCount){
+	public void setTileButtonLogic(Tile tileButton, FlowPane flowgrid, int columnCount, int rowCount){
 		tileButton.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) { 
 				tileButton.rotateTile();
 				statusProperty.set(CompletionChecker.isComplete(flowgrid, columnCount, rowCount));
 				statusProperty.setValue(CompletionChecker.isComplete(flowgrid, columnCount, rowCount));
-				colorAdjustment(flowgrid, CompletionChecker.isComplete(flowgrid, columnCount, rowCount), columnCount, rowCount);
+				colorFlowgrid = flowgrid;
+				complete = CompletionChecker.isComplete(flowgrid, columnCount, rowCount);
+				columns = columnCount;
+				rows = rowCount;
+				colorForceAllowed = true;
+				//if(CompletionChecker.isComplete(flowgrid, columnCount, rowCount)){
+					colorAdjustment(flowgrid, CompletionChecker.isComplete(flowgrid, columnCount, rowCount), columnCount, rowCount);
+				//}
+				
 			}
 		} );
 		//TODO ADD NEW RANDOM COLOR BUTTON  ON ACTION
@@ -267,6 +280,26 @@ public class GuiControl {
     		}
     		//statusProperty.setValue(false);
     		flowgrid.getParent().getParent().setDisable(true);
+    		
+    		colorEnabledAdjustment = true;
+    	}else if(forceColor){
+    		Color col = Color.valueOf(((Tile) flowgrid.getChildren().get(0)).getColoring().toString());
+    		col = col.deriveColor(10*Math.random()*Math.random()*Math.random(), 10*Math.random()*Math.random(), 1, 1);
+    		if(Math.random()<0.5){
+    			col = col.invert();
+    		}
+    		String colorVal = col.toString().substring(2, 8);
+    		String newColor = "#" + colorVal;
+    		flowgrid.setStyle("-fx-background-color: " + newColor + "; -fx-border-color: " + newColor + "; -fx-focus-color: " + newColor + "; -fx-faint-focus-color: " + newColor + ";");
+    		flowgrid.getParent().setStyle(flowgrid.getStyle());
+    		flowgrid.getParent().getParent().setStyle(flowgrid.getStyle());
+    		for (int j = 0; j < x*y; j++) {
+    			((Tile) flowgrid.getChildren().get(j)).setStyle("-fx-background-color: " + newColor + "; -fx-border-color: " + newColor + "; -fx-focus-color: " + newColor + "; -fx-faint-focus-color: " + newColor + ";");
+    			((Tile) flowgrid.getChildren().get(j)).setHexColor(newColor);
+    			((Tile) flowgrid.getChildren().get(j)).setHasHexColor(true);
+				((Tile) flowgrid.getChildren().get(j)).setBlendModeSetting(); //((Tile) flowgrid.getChildren().get(j)).getTileImageView().setBlendMode(BlendMode.DIFFERENCE);
+    		}
+    		forceColor = false;
     	}else{
     		Color col = Color.valueOf(((Tile) flowgrid.getChildren().get(0)).getColoring().toString());
     		String colorVal = col.toString().substring(2, 8);
@@ -284,6 +317,23 @@ public class GuiControl {
     		//statusProperty.setValue(false);
     		flowgrid.getParent().getParent().setDisable(false);
     	}
+    }
+    
+    public void toggleColor(boolean force){
+    	System.out.println("HE1 "+complete+" "+colorEnabledAdjustment);
+    	if(force){
+    		forceColor = true;
+    		if(colorForceAllowed){
+    			colorAdjustment(colorFlowgrid, complete, columns, rows);
+    		}
+    		
+    		
+    	}else{
+    		if(colorEnabledAdjustment){
+				colorAdjustment(colorFlowgrid, complete, columns, rows);
+    		}
+    	}
+		
     }
     
     public void menuPaneAdjustments(Pane pane, double windowHeight, Pane gameinterface, Stage arg0){

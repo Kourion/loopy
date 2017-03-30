@@ -139,4 +139,68 @@ public class LogicTile {
 		return matching;
 	}
 
+	public void rotate() {
+		//DEADENDS
+		if(left && !up && !right && !down){
+			left = false;
+			up = true;
+		}else if(!left && up && !right && !down){
+			up = false;
+			right = true;
+		}else if(!left && !up && right && !down){
+			right = false;
+			down = true;
+		}else if(!left && !up && !right && down){
+			down = false;
+			left = true;
+		}
+		
+		//BENDS
+		else if(left && up && !right && !down){
+			left = false;
+			right = true;
+		}else if(!left && up && right && !down){
+			up = false;
+			down = true;
+		}else if(!left && !up && right && down){
+			right = false;
+			left = true;
+		}else if(left && !up && !right && down){
+			down = false;
+			up = true;
+		}
+		
+		//STRAIGHTS
+		else if(left && !up && right && !down){
+			left = false;
+			right = false;
+			up = true;
+			down = true;
+		}else if(!left && up && !right && down){
+			up = false;
+			down = false;
+			left = true;
+			right = true;
+		}
+		
+		//NOTHING TO DO FOR EMPTY
+		//NOTHING TO DO FOR CROSS
+		
+		//TEES
+		else if(left && up && right && !down){
+			left = false;
+			down = true;
+		}else if(!left && up && right && down){
+			up = false;
+			left = true;
+		}else if(left && !up && right && down){
+			right = false;
+			up = true;
+		}else if(left && up && !right && down){
+			down = false;
+			right = true;
+		}
+		
+	}
+
 }

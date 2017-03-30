@@ -66,6 +66,9 @@ public class ButtonPane extends FlowPane{
 		toggleColorButton.setStyle("-fx-background-color: " + style + "; -fx-border-color: " + style + "; -fx-focus-color:  " + style + ";"
 				+ " -fx-faint-focus-color:  " + style + " ;");
 		
+		//((ButtonBase) menuPane.getChildren().get(4)).setOnAction(new EventHandler<ActionEvent>(){ 
+		
+		
 		this.setCenterShape(true);
 		this.getChildren().setAll(loadFileButton, randomBoardButton, solveBoardButton, saveBoardButton, toggleColorButton);
 	}
