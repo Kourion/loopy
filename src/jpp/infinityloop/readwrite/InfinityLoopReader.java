@@ -3,38 +3,55 @@ package jpp.infinityloop.readwrite;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import jpp.infinityloop.board.Board;
 
 public class InfinityLoopReader {
 	
 	int byteCount = 0;
 	
-	final boolean addComma = false, savegameTileFormat = true; //Adjust style of txt-file output.
+	final boolean addComma = false, savegameTileFormat = true;
+	boolean gui = false, ignoreError = false; //Adjust style of txt-file output.
 	final boolean gamedataTileFormat = true; //Should always be true. (Does not have to be depending on grid, but supports more graphics options if it is.)
 	public int rowCount = 0, columnCount = 0;
 	public double num = 0;
 	int columnCounterTile = 0, columnCounterOutput = 0;
 	public String tileData;
 	
-	public Board read (byte[] dataBytes, int amountBytes, long filelength) throws IOException {
+	public Board read (byte[] dataBytes, int amountBytes, long filelength, boolean gui, boolean ignoreError) throws IOException {
 	    StringBuffer strBfIso = new StringBuffer();
 	    StringBuffer strBfUtf8 = new StringBuffer();
 	    StringBuffer strBfOutput = new StringBuffer();
 	    StringBuffer strBfTile = new StringBuffer();
 	    boolean infinitySymbol = true, firstLoop = true;
-	    
+	    this.gui = gui;
 	    //System.out.println("File size: "+file.length()+" Bytes returned: "+amountBytes+"  Array Size: "+dataBytes.length); //OLD DEBUG
-	    System.out.println("Bytes returned: "+amountBytes+"  Array Size: "+dataBytes.length); //OLD DEBUG
+	    //System.out.println("Bytes returned: "+amountBytes+"  Array Size: "+dataBytes.length); //OLD DEBUG
 	    
 	    /* Check for infinity symbol */
-	    if(dataBytes[0] == (byte)226){}else{ System.out.println("Infinity symbol not found! (1)"); infinitySymbol = false; } //11100010
-	    if(dataBytes[1] == (byte)136){}else{ System.out.println("Infinity symbol not found! (2)"); infinitySymbol = false; } //10001000
-	    if(dataBytes[2] == (byte)158){}else{ System.out.println("Infinity symbol not found! (3)"); infinitySymbol = false; } //10011110
+	    if(dataBytes[0] == (byte)226){}else{ /*System.out.println("Infinity symbol not found! (1)");*/ infinitySymbol = false; } //11100010
+	    if(dataBytes[1] == (byte)136){}else{ /*System.out.println("Infinity symbol not found! (2)");*/ infinitySymbol = false; } //10001000
+	    if(dataBytes[2] == (byte)158){}else{ /*System.out.println("Infinity symbol not found! (3)");*/ infinitySymbol = false; } //10011110
 	    
 	    if(infinitySymbol){
 	    	strBfOutput.append('\u221E');
 	    }else {
-			throw new IOException("Invalid file, infinity symbol not found!");
+			
+			if(gui&&!ignoreError){
+    			Alert error1 = new Alert(AlertType.CONFIRMATION); 
+				error1.setTitle("Error 3"); 
+				error1.setHeaderText("FILE READ ERROR"); 
+				error1.setContentText("Invalid file, infinity symbol not found!"); 
+				
+				ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+				error1.getButtonTypes().setAll(okButton); 
+				error1.showAndWait();
+    		}else if(!ignoreError){
+    			throw new IllegalArgumentException("Invalid file, infinity symbol not found!");
+    		}
 		}
 	    
 	    strBfOutput.append(decodeWidthHeight(dataBytes));
@@ -67,7 +84,22 @@ public class InfinityLoopReader {
 	    
     	//System.out.println("\n\n\n\n\n");
     	
-    	System.out.println(strBfOutput.toString());
+    	//System.out.println(strBfOutput.toString());
+    	if(strBfTile.length()!=((this.rowCount*this.columnCount)+this.rowCount-1)){
+    		//System.out.println(strBfTile.length()+"##"+((rowCount*columnCount)+rowCount-1));
+    		if(gui&&!ignoreError){
+    			Alert error1 = new Alert(AlertType.CONFIRMATION); 
+				error1.setTitle("Error 2"); 
+				error1.setHeaderText("FILE READ ERROR"); 
+				error1.setContentText("Reading the file failed, please try a different file. The amount of tiles does not match width and height."); 
+				
+				ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+				error1.getButtonTypes().setAll(okButton); 
+				error1.showAndWait();
+    		}else if(!ignoreError){
+    			throw new IllegalArgumentException("The amount of tiles does not match width and height.");
+    		}
+    	}
     	//System.out.println(strBfTile.toString());
     	
     	Board board = new Board(strBfOutput.toString(), tileData, columnCount, rowCount);
@@ -107,7 +139,7 @@ public class InfinityLoopReader {
 	}
 	
 	/**
-	 * Converts content to Infinity Loop Enum
+	 * Converts byte content to a readable string format.
 	 * @param type 
 	 * @return
 	 */
@@ -130,7 +162,7 @@ public class InfinityLoopReader {
     	
     	if(first < 0){
     		first = firstByte>>4; 
-    		System.err.println("Possible error while decoding bytes.");
+    		//System.err.println("Possible error while decoding bytes.");
     	}
     	
     	if((secondByte & 0x1) != 0){ second = second +1; } //System.out.println("is1");}
@@ -186,7 +218,19 @@ public class InfinityLoopReader {
 				}
 			}else{
 				
-				System.err.println("ERROR 4: Unsupported byte splitting decoding case." + " Current CCO: "+columnCounterOutput);
+				//System.err.println("ERROR 4: Unsupported byte splitting decoding case." + " Current CCO: "+columnCounterOutput);
+				if(gui&&!ignoreError){
+	    			Alert error1 = new Alert(AlertType.CONFIRMATION); 
+					error1.setTitle("Error 5"); 
+					error1.setHeaderText("FILE READ ERROR"); 
+					error1.setContentText("Invalid file, bytes are not properly formated."); 
+					
+					ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+					error1.getButtonTypes().setAll(okButton); 
+					error1.showAndWait();
+	    		}else if(!ignoreError){
+	    			throw new IllegalArgumentException("Invalid file, bytes are not properly formated.");
+	    		}
 			}
 			
 		}		
@@ -221,18 +265,25 @@ public class InfinityLoopReader {
 				}else{
 					str = str + strFirst + strSecond;
 				}
-				System.err.println("ERROR 6: FILE FORMAT SHOULD BE SET TO TRUE!");
+				//System.err.println("ERROR 6: FILE FORMAT SHOULD BE SET TO TRUE!");
 			}else{
-				System.err.println("ERROR 4: Unsupported byte splitting decoding case." + " Current CCT: "+columnCounterTile);
+				if(gui&&!ignoreError){
+	    			Alert error1 = new Alert(AlertType.CONFIRMATION); 
+					error1.setTitle("Error 5"); 
+					error1.setHeaderText("FILE READ ERROR"); 
+					error1.setContentText("Invalid file, bytes are not properly formated."); 
+					
+					ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+					error1.getButtonTypes().setAll(okButton); 
+					error1.showAndWait();
+	    		}else if(!ignoreError){
+	    			throw new IllegalArgumentException("Invalid file, bytes are not properly formated.");
+	    		}
 			}
 			columnCounterTile = columnCounterTile + 2;
 		}
 
 		// Either print as multiple lines(isTileFormat) or as single line(!isTileFormat).
-
-		
-
-
 		//columnCounter = columnCounter + 2;
 		
 		// System.out.println("ByteString: "+str.toString());
@@ -295,7 +346,19 @@ public class InfinityLoopReader {
 				str = "\u254B"; byteCount++;
 				break;
 			default:
-				System.err.println("Error @jpp.infinityloop.readWrite.InfinityLoop.Reader.asInfinityLoopEnum !");
+				//System.err.println("Error @jpp.infinityloop.readWrite.InfinityLoop.Reader.asInfinityLoopEnum !");
+				if(gui&&!ignoreError){
+	    			Alert error1 = new Alert(AlertType.CONFIRMATION); 
+					error1.setTitle("Error 5"); 
+					error1.setHeaderText("FILE READ ERROR"); 
+					error1.setContentText("Invalid file, bytes are not properly formated."); 
+					
+					ButtonType okButton = new ButtonType("OK", ButtonData.OK_DONE);
+					error1.getButtonTypes().setAll(okButton); 
+					error1.showAndWait();
+	    		}else if(!ignoreError){
+	    			throw new IllegalArgumentException("Invalid file, bytes are not properly formated.");
+	    		}
 				break;
 		}
 		return str;
@@ -312,6 +375,14 @@ public class InfinityLoopReader {
 		
 		this.columnCount = width;
 		this.rowCount = height;
+		
+		if(width == 0 || height == 0){
+			try {
+				throw new IOException("Improper width or height.");
+			} catch (IOException e) {
+				//e.printStackTrace();
+			}
+		}
 		
 		str = str + "(W:" + width +" H:" + height+")";
 		return str;

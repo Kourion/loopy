@@ -7,6 +7,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -28,6 +32,9 @@ public class GuiControl {
 	private FlowPane colorFlowgrid = new FlowPane();
 	private boolean complete = false, colorEnabledAdjustment = false, forceColor = false, colorForceAllowed = false;
 	private int columns = 0, rows = 0;
+	
+	private GameInterfacePane gameint;
+	private ButtonPane btnpane = new ButtonPane(gameint); 
 	
 	/**
 	 * Logic for all tile Buttons
@@ -284,6 +291,53 @@ public class GuiControl {
     		flowgrid.getParent().getParent().setDisable(true);
     		
     		colorEnabledAdjustment = true;
+    		
+    		//btnpane.setStyle(flowgrid.getParent().getStyle());
+    		for (int i = 0; i < 5; i++) {
+    			btnpane.getChildren().get(i).setStyle(flowgrid.getStyle());
+			}
+    		
+    		btnpane.setStyle(flowgrid.getStyle());
+    		
+    		if(((GameInterfacePane) flowgrid.getParent().getParent()).getAllowDisplay()){
+    			@SuppressWarnings("rawtypes")
+    			Dialog dialog = new Dialog();
+    			dialog.setHeaderText("Congratulations, game finished!");
+    			dialog.setContentText("Load a new game from a file or play a random game via the menu bar.");
+    			ButtonType okBtn = new ButtonType("OK", ButtonData.OK_DONE);
+    			dialog.getDialogPane().getButtonTypes().setAll(okBtn);
+    			dialog.show();
+    		}
+    		
+    		
+			
+    		/*
+    		if( ((GameInterfacePane) flowgrid.getParent().getParent()).getNewOnComplete()){
+    			Dialog dialog = new Dialog();
+    			dialog.setHeaderText("Congratulations, game finished!");
+    			dialog.setContentText("Do you want to load a new game now?");
+    			ButtonType buttonTypeOne = new ButtonType("Load a new game!");
+    			//ButtonType buttonTypeTwo = new ButtonType("Recolor the board!");
+    			ButtonType buttonTypeCancel = new ButtonType("Close this dialog.", ButtonData.CANCEL_CLOSE);
+
+    			dialog.getDialogPane().getButtonTypes().setAll(buttonTypeOne, buttonTypeCancel); //buttonTypeTwo
+
+    			Optional<ButtonType> result = dialog.showAndWait();
+    			if (result.get() == buttonTypeOne){
+    				//GameInterfacePane.loadNewGame();
+    				triggerNewGame();
+    				//ButtonPane btn = new ButtonPane(null);
+    				//((Button) btn.getChildren().get(1)).fire();
+    			} //else if (result.get() == buttonTypeTwo) {
+    				//((GameInterfacePane) flowgrid.getParent().getParent()).setNewOnComplete(false);
+    				//colorAdjustment(flowgrid, complete, x, y);
+    				//((GameInterfacePane) flowgrid.getParent().getParent()).setNewOnComplete(true);
+    			//} 
+    			else {
+    				((GameInterfacePane) flowgrid.getParent().getParent()).setNewOnComplete(false);
+    			}
+    		}*/
+    		
     	}else if(forceColor){
     		Color col = Color.valueOf(((Tile) flowgrid.getChildren().get(0)).getColoring().toString());
     		col = col.deriveColor(10*Math.random()*Math.random()*Math.random(), 10*Math.random()*Math.random(), 1, 1);
@@ -318,8 +372,10 @@ public class GuiControl {
     		}
     		//statusProperty.setValue(false);
     		flowgrid.getParent().getParent().setDisable(false);
+    		btnpane.setStyle(flowgrid.getStyle());
     	}
     }
+    
     
     public void toggleColor(boolean force){
     	//System.out.println("HE1 "+complete+" "+colorEnabledAdjustment);
@@ -338,9 +394,19 @@ public class GuiControl {
 		
     }
     
-    public void menuPaneAdjustments(Pane pane, double windowHeight, Pane gameinterface, Stage arg0){
+
+   
+    
+    public void menuPaneAdjustments(ButtonPane pane, double windowHeight, GameInterfacePane gameinterface, Stage arg0){
 		pane.setPrefWidth(32);
 		pane.setTranslateY(windowHeight/2-(32*5)/2);
+		this.btnpane = pane;
+		this.gameint = gameinterface;
     }
 
+    public void triggerNewGame(){
+    	btnpane = new ButtonPane(gameint);
+    	((Button) btnpane.getChildren().get(2)).fire();
+    }
+    
 }

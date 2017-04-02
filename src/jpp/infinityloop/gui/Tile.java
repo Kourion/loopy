@@ -46,13 +46,13 @@ public class Tile extends Button{
 		this.rotateTile(false);
 	}
 	
-	public void rotateTile(boolean onStage){
+	public void rotateTile(boolean animate){
 		switch (type){
 			case BEND:
 				if(up&&right){
 					up = false;
 					down = true;
-					if(onStage){	
+					if(animate){	
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(180+pastRotations);
 						rt.setCycleCount(1);
@@ -62,7 +62,7 @@ public class Tile extends Button{
 				}else if(right&&down){
 					right = false;
 					left = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(270+pastRotations);
 						rt.setCycleCount(1);
@@ -72,7 +72,7 @@ public class Tile extends Button{
 				}else if(down&&left){
 					down = false;
 					up = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(360+pastRotations);
 						rt.setCycleCount(1);
@@ -84,7 +84,7 @@ public class Tile extends Button{
 				else if(left&&up){
 					left = false;
 					right = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(90+pastRotations);
 						rt.setCycleCount(1);
@@ -97,7 +97,7 @@ public class Tile extends Button{
 				
 			case CROSS:
 				
-				if(onStage){
+				if(animate){
 					rt = new RotateTransition(Duration.millis(200), this);
 					rt.setToAngle(90+crossRot);
 					rt.setCycleCount(1);
@@ -117,7 +117,7 @@ public class Tile extends Button{
 				
 				if(left){
 					if(first){ pastRotations = 360; first = false; deadendRot = 0; }
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(90+pastRotations);
 						rt.setCycleCount(1);
@@ -129,7 +129,7 @@ public class Tile extends Button{
 					up = true;
 					this.setRotate(90+pastRotations);
 				}else if(up){
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(180+pastRotations);
 						rt.setCycleCount(1);
@@ -141,7 +141,7 @@ public class Tile extends Button{
 					right = true;
 					this.setRotate(180+pastRotations);
 				}else if(right){
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(270+pastRotations);
 						rt.setCycleCount(1);
@@ -153,7 +153,7 @@ public class Tile extends Button{
 					down = true;
 					this.setRotate(270+pastRotations);
 				}else if(down){
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(360+pastRotations);
 						rt.setCycleCount(1);
@@ -182,7 +182,7 @@ public class Tile extends Button{
 					down = true;
 					if(this.getRotate() == 0 + pastRotations ){
 						if(first){ pastRotations = 360; first = false; deadendRot = 0; }
-						if(onStage){
+						if(animate){
 							rt = new RotateTransition(Duration.millis(200), this);
 							rt.setToAngle(90+pastRotations);
 							rt.setCycleCount(1);
@@ -192,7 +192,7 @@ public class Tile extends Button{
 						this.setRotate(90+pastRotations);
 						straightRot++;
 					}else if(this.getRotate() == 180 + pastRotations){
-						if(onStage){
+						if(animate){
 							rt = new RotateTransition(Duration.millis(200), this);
 							rt.setToAngle(270+pastRotations);
 							rt.setCycleCount(1);
@@ -208,7 +208,7 @@ public class Tile extends Button{
 					left = true;
 					right = true;
 					if(this.getRotate() == 90 + pastRotations){
-						if(onStage){
+						if(animate){
 							rt = new RotateTransition(Duration.millis(200), this);
 							rt.setToAngle(180+pastRotations);
 							rt.setCycleCount(1);
@@ -218,7 +218,7 @@ public class Tile extends Button{
 						this.setRotate(180+pastRotations);
 						straightRot++;
 					}else if(this.getRotate() == 270+pastRotations){
-						if(onStage){
+						if(animate){
 							rt = new RotateTransition(Duration.millis(200), this);
 							rt.setToAngle(360+pastRotations);
 							rt.setCycleCount(1);
@@ -237,14 +237,14 @@ public class Tile extends Button{
 				break;
 				
 			case TEE:
-				if(onStage){
+				if(animate){
 					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
 				}
 				if(left && up && right){
 					
 					left = false;
 					down = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(90+pastRotations);
 						rt.setCycleCount(1);
@@ -255,7 +255,7 @@ public class Tile extends Button{
 				}else if(up && right && down){
 					up = false;
 					left = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(180+pastRotations);
 						rt.setCycleCount(1);
@@ -266,7 +266,7 @@ public class Tile extends Button{
 				}else if(right && down && left){
 					right = false;
 					up = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(270+pastRotations);
 						rt.setCycleCount(1);
@@ -278,7 +278,7 @@ public class Tile extends Button{
 					
 					down = false;
 					right = true;
-					if(onStage){
+					if(animate){
 						rt = new RotateTransition(Duration.millis(200), this);
 						rt.setToAngle(360+pastRotations);
 						rt.setCycleCount(1);
@@ -294,7 +294,7 @@ public class Tile extends Button{
 					teeRot = 0;
 				}
 				
-				if(onStage){
+				if(animate){
 					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
 				}
 				

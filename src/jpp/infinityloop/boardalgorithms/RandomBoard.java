@@ -9,12 +9,15 @@ public class RandomBoard {
 
 	@SuppressWarnings("unused")
 	private int width = 0, height = 0, actualDeadEndEdges = 0, actualDeadEndCenter = 0;
+	@SuppressWarnings("unused")
 	private int balanceBEND = 0, balanceCROSS = 0, balanceDEADEND = 0, balanceSTRAIGHT = 0, balanceTEE = 0, balanceEMPTY = 0;
 	
 	public RandomBoard() {
 		
 	}
 
+	/** Haupt entscheider für verteilung der Tiles ist in getRandomCenterType() zu finden. **/
+	
 	public Board createRandomBoard(int minWidth, int maxWidth, int minHeight, int maxHeight){
 		
 		boolean isProper = false;
@@ -183,7 +186,7 @@ public class RandomBoard {
 		    isProper = CompletionChecker.isProper(array, height, width);
 		    
 		    if(!isProper){
-		    	for (int i = 0; i < 4; i++) {
+		    	for (int i = 0; i < 1; i++) {
 			    	array = fillDeadEnds(array);
 				    array = replaceDeadEnds(array);
 				    array = rotateArrayToSolveByType(array);
@@ -218,7 +221,7 @@ public class RandomBoard {
 		    isProper = CompletionChecker.isProper(array, height, width);
 		    
 		    if(!isProper){
-			    for (int i = 0; i < 5; i++) {
+			    for (int i = 0; i < 1; i++) {
 					array = fillDeadEnds(array);
 					array = replaceDeadEnds(array);
 					isProper = CompletionChecker.isProper(array, height, width);
@@ -231,10 +234,13 @@ public class RandomBoard {
 	    isProper = CompletionChecker.isProper(array, height, width);
 		}
 	
+		LogicTile[][] solvedArray = array.clone(); //= new LogicTile[height][width];
+		
+		
 		array = randomRotatedArray(array);
 		
 	    //System.out.println("BT: "+ balanceTEE + " BS: "+ balanceSTRAIGHT + " BC: "+ balanceBEND);
-	    System.out.println("Status cross: "+balanceCROSS+" tee: "+balanceTEE+" bend: "+balanceBEND+" straight: "+balanceSTRAIGHT+" deadend: "+balanceDEADEND+" empty: "+balanceEMPTY);
+	    //System.out.println("Status cross: "+balanceCROSS+" tee: "+balanceTEE+" bend: "+balanceBEND+" straight: "+balanceSTRAIGHT+" deadend: "+balanceDEADEND+" empty: "+balanceEMPTY);
 	    
 	    checkErrorTypeDoesNotMatchBoolean(array);
 	    //System.out.println(amountPerType(array));
@@ -243,10 +249,15 @@ public class RandomBoard {
 	    
 	    //System.out.println(print(array));
 	    //System.exit(-1);
-	    Board board = new Board(print(array), print(array), rngW, rngH);
+	    
+	    String gamedata = "(W:" + width +" H:" + height+")" + "\n" + print(array);
+	    
+	    Board board = new Board(gamedata, print(array), rngW, rngH);
 	    board.setTiledata(print(array));
 	    board.setColumns(rngW);
 	    board.setRows(rngH);
+	    board.setSolvedArray(solvedArray);
+	    board.setLogicTiles(array);
 		return board;
 	}
 	
@@ -1083,7 +1094,7 @@ public class RandomBoard {
 		for (int row = 0; row < height; row++) {
 			for (int column = 0; column < width; column++) {
 				if(!array[row][column].checkTypeMatchBoolean()){
-					System.err.println("Tile at row: "+ row +" column: "+column+" is faulty."+" Tile should be a: "+array[row][column].getType());
+					//System.err.println("Tile at row: "+ row +" column: "+column+" is faulty."+" Tile should be a: "+array[row][column].getType());
 				}
 			}
 		}
@@ -1760,9 +1771,9 @@ public class RandomBoard {
 					try {
 						array[row-1][column].hasDown();
 					} catch (Exception e) {
-						System.out.println("Tile in row: "+row+" column: "+column+" has l: "+array[row][column].hasLeft()+" has u: "+array[row][column].hasUp()+" has r: "+array[row][column].hasRight()
-								+" has d: "+array[row][column].hasDown() +" is type: "+array[row][column].getType() + " was turned lr: "+array[row][column].isSwitchedLR()+ " was turned ud: "+
-								array[row][column].isSwitchedUD());
+						//System.out.println("Tile in row: "+row+" column: "+column+" has l: "+array[row][column].hasLeft()+" has u: "+array[row][column].hasUp()+" has r: "+array[row][column].hasRight()
+						//		+" has d: "+array[row][column].hasDown() +" is type: "+array[row][column].getType() + " was turned lr: "+array[row][column].isSwitchedLR()+ " was turned ud: "+
+						//		array[row][column].isSwitchedUD());
 					}
 					if(!array[row-1][column].hasDown() && !array[row-1][column].isSwitchedUD()){ 
 						if(column == 0 || column == width-1){
@@ -1822,9 +1833,9 @@ public class RandomBoard {
 					try {
 						array[row+1][column].hasUp();
 					} catch (Exception e) {
-						System.out.println("Tile in row: "+row+" column: "+column+" has l: "+array[row][column].hasLeft()+" has u: "+array[row][column].hasUp()+" has r: "+array[row][column].hasRight()
-								+" has d: "+array[row][column].hasDown() +" is type: "+array[row][column].getType() + " was turned lr: "+array[row][column].isSwitchedLR()+ " was turned ud: "+
-								array[row][column].isSwitchedUD());
+						//System.out.println("Tile in row: "+row+" column: "+column+" has l: "+array[row][column].hasLeft()+" has u: "+array[row][column].hasUp()+" has r: "+array[row][column].hasRight()
+						//		+" has d: "+array[row][column].hasDown() +" is type: "+array[row][column].getType() + " was turned lr: "+array[row][column].isSwitchedLR()+ " was turned ud: "+
+						//		array[row][column].isSwitchedUD());
 					}
 					if(!array[row+1][column].hasUp() && !array[row+1][column].isSwitchedUD()){ 
 						if(column == 0 || column == width-1){
@@ -1888,7 +1899,7 @@ public class RandomBoard {
 			for (int j = 0; j < width; j++) {
 				printString = printString + getTileString(logicTileRaw[i][j]);
 			}
-			printString = printString + "\n"; // System.lineSeparator(); //TODO put back in
+			printString = printString + "\n"; // System.lineSeparator(); //TODO put back in?
 		}
 		return printString;
 	}
@@ -2170,16 +2181,16 @@ public class RandomBoard {
 	private TileType getRandomCenterType(){ //TODO TURN BACK OR FURTHER CHANGE PROPABILITIES
 		TileType type = TileType.EMPTY;
 		
-		double rn = Math.random();
-		if(rn < 0.0625){
+		double rn = Math.random(); //sich cancellened additionen waren Versuche die auch gut Verteilungen ergaben.
+		if(rn < 0.0625+0.02-0.02){ 
 			type = TileType.CROSS;
-		}else if(rn < 0.3125){ 
+		}else if(rn < 0.3125+0.1-0.1){ 
 			type = TileType.TEE;
 		}else if(rn < (0.5625-0.05) ){
 			type = TileType.BEND; //0.5625
-		}else if(rn < (0.6875-0.1) ){
+		}else if(rn < (0.6875-0.05) ){
 			type = TileType.STRAIGHT; //0.9375
-		}else if(rn < (0.9375-0.05) ){
+		}else if(rn < (0.9375) ){
 			type = TileType.DEADEND;
 		    actualDeadEndCenter++;
 		}else{

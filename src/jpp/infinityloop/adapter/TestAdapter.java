@@ -2,16 +2,22 @@ package jpp.infinityloop.adapter;
 
 import java.io.IOException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
 import javafx.scene.layout.FlowPane;
 import jpp.infinityloop.board.Board;
 import jpp.infinityloop.boardalgorithms.RandomBoard;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.readwrite.InfinityLoopReader;
+import jpp.infinityloop.readwrite.InfinityLoopWriter;
+import jpp.infinityloop.solver.LogicSolver;
 import jpp.infinityloop.gui.Tile;
 
 public class TestAdapter implements ITestAdapter<Board>{
 
 	private InfinityLoopReader reader = new InfinityLoopReader();
+	private InfinityLoopWriter writer = new InfinityLoopWriter();
 	private int minWidth = 0, maxWidth = 0, minHeight = 0, maxHeight = 0;
 	private boolean generatorInitialised;
 	private RandomBoard rdm = new RandomBoard();
@@ -21,7 +27,7 @@ public class TestAdapter implements ITestAdapter<Board>{
 		
 		Board board = null;
 		try {
-			board = reader.read(data, data.length, data.length);
+			board = reader.read(data, data.length, data.length, false, false);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -31,22 +37,32 @@ public class TestAdapter implements ITestAdapter<Board>{
 
 	@Override
 	public byte[] encode(Board board) {
-		// TODO Auto-generated method stub
+		try {
+			return writer.getOut(board);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public boolean solve(Board board) {
-		// TODO Auto-generated method stub
-		return false;
+		@SuppressWarnings({ "unused", "rawtypes" })
+		Dialog dialog = new Dialog();
+		Alert info = new Alert(AlertType.NONE);
+		GameInterfacePane gameinterface = new GameInterfacePane(1600, 900, board, false);
+		LogicSolver solver = new LogicSolver(gameinterface, info);
+		boolean possible = solver.solve();
+		return possible;
 	}
 
 	@Override
 	public void initGenerator(int minWidth, int maxWidth, int minHeight, int maxHeight) {
 		this.minWidth = minWidth;
-		this.maxWidth = maxWidth;
+		this.maxWidth = maxWidth+1;
 		this.minHeight = minHeight;
-		this.maxHeight = maxHeight;
+		this.maxHeight = maxHeight+1;
 		if(minWidth != 0 && maxWidth != 0 && minHeight != 0 && maxHeight != 0){
 			this.generatorInitialised = true;
 		}else{
@@ -68,11 +84,12 @@ public class TestAdapter implements ITestAdapter<Board>{
 
 	@Override
 	public void rotate(Board board, int column, int row) {
-		GameInterfacePane gameinterface = new GameInterfacePane(1600, 900, board);
+		GameInterfacePane gameinterface = new GameInterfacePane(1600, 900, board, false);
 		FlowPane flowgrid = gameinterface.getFlowgrid();
 		((Tile) flowgrid.getChildren().get( (board.getColumns()*row)+column )).fire();
-		gameinterface.setFlowgrid(flowgrid);
-		//TODO WRITE BACK TO BOARD
+		gameinterface.setFlowgrid(flowgrid); //This line ought to be unnecessary.
+		gameinterface.getCurrentBoardData();// WRITE BACK TO BOARD //TODO check does this work?
+		
 	}
 
 }

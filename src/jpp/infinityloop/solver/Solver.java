@@ -5,8 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import javafx.animation.RotateTransition;
-import javafx.util.Duration;
+import jpp.infinityloop.boardalgorithms.LogicTile;
 import jpp.infinityloop.gui.GameInterfacePane;
 import jpp.infinityloop.gui.Tile;
 import jpp.infinityloop.gui.TileType;
@@ -14,9 +13,13 @@ import jpp.infinityloop.gui.TileType;
 public class Solver {
 
 	private GameInterfacePane board;
+	private LogicTile[][] logic;
+	private LogicTile[][] logicSolved;
 
 	public Solver(GameInterfacePane board) {
 		this.board = board;
+		this.logic = board.getLogicTiles();
+		
 	}
 
 	public void solve() {
@@ -24,11 +27,24 @@ public class Solver {
 		int count = 0;
 		// while(!CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),
 		// board.getRowCount())){
+		
+		for (int i = 0; i < logic.length; i++) {
+			for (int j = 0; j < logic.length; j++) {
+					logic[i][j].setType(board.getTile(i,j).getType());
+					logic[i][j].setLeft(( board.getTile(i,j)).hasLeft());
+					logic[i][j].setUp((board.getTile(i,j)).hasUp());
+					logic[i][j].setRight(board.getTile(i,j).hasRight());
+					logic[i][j].setDown(board.getTile(i,j).hasDown());
+					logic[i][j].setColumn(board.getTile(i,j).getColumn());
+					logic[i][j].setRow(board.getTile(i,j).getRow());
+			}
+		}
+		
 		while (step.hasNext()) {
 
 			count++;
-			if (count % 10000 == 0) {
-				System.out.println("Count step: " + count);
+			if (count % 100000 == 0) {
+				//System.out.println("Count step: " + count);
 			}
 			step = step.getNextStep();
 
@@ -57,10 +73,23 @@ public class Solver {
 			}
 		}
 		//CompletionChecker.isComplete(board.getPane(),board.getColumnCount(),board.getRowCount());
-		Tile aTile = board.getTile(0, 0);
-		for(int i = 0; i < 4; i++) { // fire a button for times, to get the board to check for completion
-			aTile.fire();
+		//Tile aTile = board.getTile(0, 0);
+		//for(int i = 0; i < 4; i++) { // fire a button four times, to get the board to check for completion
+		//	aTile.fire();
+		//}
+		
+		for (int i = 0; i < board.getRowCount(); i++) {
+			for (int j = 0; j < board.getColumnCount(); j++) {
+				logicSolved[i][j].setType(board.getTile(i,j).getType());
+				logicSolved[i][j].setLeft(( board.getTile(i,j)).hasLeft());
+				logicSolved[i][j].setUp((board.getTile(i,j)).hasUp());
+				logicSolved[i][j].setRight(board.getTile(i,j).hasRight());
+				logicSolved[i][j].setDown(board.getTile(i,j).hasDown());
+				logicSolved[i][j].setColumn(board.getTile(i,j).getColumn());
+				logicSolved[i][j].setRow(board.getTile(i,j).getRow());
+			}
 		}
+		
 	}
 
 	private class Step {
@@ -153,10 +182,12 @@ public class Solver {
 			if (actualTile == null) {
 				System.err.println("getNextConfigStep: tried to get next config for: " + this);
 			}
+			/*//TODO ANIMATION
 			RotateTransition rt = new RotateTransition(Duration.millis(500), actualTile);
 			rt.setByAngle(90);
 			rt.setCycleCount(1);
 			rt.play();
+			*/
 			// if(actualTile != null) {
 			actualTile.rotateTile(false);
 			//actualTile.fire();

@@ -6,6 +6,7 @@ public class LogicTile {
 
 	private TileType type = TileType.EMPTY;
 	private boolean left = false, up = false, right = false, down = false, switchedLR = false, switchedUD = false;
+	private int row = 0, col = 0;
 	
 	public LogicTile(TileType type, boolean left, boolean up, boolean right, boolean down) {
 		this.setType(type);
@@ -201,6 +202,137 @@ public class LogicTile {
 			right = true;
 		}
 		
+	}
+	
+	public void rotateTile(boolean animate){
+		switch (type){
+			case BEND:
+				if(up&&right){
+					up = false;
+					down = true;
+				}else if(right&&down){
+					right = false;
+					left = true;
+				}else if(down&&left){
+					down = false;
+					up = true;
+				}
+				else if(left&&up){
+					left = false;
+					right = true;
+				}
+				break;
+				
+			case CROSS:
+				break;
+				
+			case DEADEND:
+				
+				//System.out.println(pastRotations+" "+left+" "+up+" "+" "+right+" "+down);
+				
+				if(left){
+					left = false;
+					up = true;
+					//this.setRotate(90);
+				}else if(up){
+					up = false;
+					right = true;
+					//this.setRotate(180);
+				}else if(right){
+					right = false;
+					down = true;
+					//this.setRotate(270);
+				}else if(down){
+					down = false;
+					left = true;
+					//this.setRotate(360);
+				}
+				break;
+				
+			case STRAIGHT:
+				if(left && right){
+					
+					left = false;
+					right = false;
+					up = true;
+					down = true;
+					
+				}else if(up && down){
+					up = false;
+					down = false;
+					left = true;
+					right = true;
+					
+				}
+				
+				break;
+				
+			case TEE:
+				if(animate){
+					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
+				}
+				if(left && up && right){
+					
+					left = false;
+					down = true;
+					
+				}else if(up && right && down){
+					up = false;
+					left = true;
+					
+				}else if(right && down && left){
+					right = false;
+					up = true;
+					
+				}else if(down && left && up){
+					
+					down = false;
+					right = true;
+					
+				}
+				
+				
+				if(animate){
+					//System.out.println("curr:"+this.getRotate()+" rnd:"+pastRotations+" "+left+" "+up+" "+" "+right+" "+down+" rot:"+teeRot);
+				}
+				
+				//this.setRotate(this.getRotate()+90);
+				break;
+				
+			case EMPTY:
+				break;
+				
+			default:
+				break;
+		}
+	}
+
+	/**
+	 * @return the row
+	 */
+	public int getRow() {
+		return row;
+	}
+
+	/**
+	 * @param row the row to set
+	 */
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	/**
+	 * @return the col
+	 */
+	public int getColumn() {
+		return col;
+	}
+
+	/**
+	 * @param col the col to set
+	 */
+	public void setColumn(int col) {
+		this.col = col;
 	}
 
 }

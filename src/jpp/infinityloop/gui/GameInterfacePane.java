@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import jpp.infinityloop.board.Board;
 import jpp.infinityloop.boardalgorithms.LogicTile;
 
@@ -20,20 +21,26 @@ public class GameInterfacePane extends Pane{
 	GuiControl ctrl = new GuiControl();
 	private int rowCount = 0, columnCount = 0;
 	private String tileData = "";
-	private boolean isPredefinedBord = false, isRandomBord = false;
+	private boolean isPredefinedBord = false, isRandomBord = false, allowDisplay = false;
 	private StyleType currentStyle = StyleType.AliceBlue;
+	private Board board = null;
 	//private GridPane flowgrid;
 	String color = "blue";
 	private FlowPane flowgrid = new FlowPane();
+	private boolean newOnComplete = false;
+	@SuppressWarnings("unused")
+	private ButtonPane btnPane;
 	
 	public GameInterfacePane(){
 	}
 	
-	public GameInterfacePane(double width, double height, Board board){
+	public GameInterfacePane(double width, double height, Board board, boolean allowDisplay){
 		//int rowCount, int columnCount, String tileData
 		this.setPrefSize(width, height);
 		this.rowCount = board.getRows();
 		this.columnCount = board.getColumns();
+		this.board = board;
+		this.allowDisplay = allowDisplay;
 		if(board.getTiledata() != null && board.getTiledata() != ""){
 			this.tileData = board.getTiledata();
 			isPredefinedBord = true;
@@ -82,7 +89,7 @@ public class GameInterfacePane extends Pane{
 		}else{
 			blendMode = 3;
 		}
-		System.out.println("DEBUG: Style: "+currentStyle+" BlendMode: "+blendMode);
+		//System.out.println("DEBUG: Style: "+currentStyle+" BlendMode: "+blendMode);
 		
 		
 		/** Clear the tile data string from eventual line breaks. **/
@@ -212,7 +219,6 @@ public class GameInterfacePane extends Pane{
 						System.out.println("ERROR 1: There seems to be an empty board loaded!");
 					}
 					
-					
 					Tile gameTile = new Tile(type, iconImg, currentStyle, up, right, down, left, currColumn, currRow, blendMode);
 					
 					ctrl.setTileButtonStyle(gameTile, flowgrid, columnCount, rowCount);
@@ -224,17 +230,11 @@ public class GameInterfacePane extends Pane{
 					ctrl.setTileButtonLogic(gameTile, flowgrid, columnCount, rowCount);
 					
 					tilesCount++;
-				}else if(isRandomBord){	//TODO INSERT RANDOM PICK MECHANISM
+				}else if(isRandomBord){
 					//NOW IN LAUNCH
 				}
-				//grid.add(rolandsButton, i, k);
 			}
 		}
-		
-		
-		
-	 	//displayPane.setPrefSize(200, 400);
-		//displayPane.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		displayPane.setStyle("-fx-background-color: "+ currentStyle +"; -fx-border-color: " + currentStyle + "; -fx-focus-color: " + currentStyle + "; -fx-faint-focus-color: " + currentStyle + ";");
 		flowgrid.setStyle("-fx-background-color: "+ currentStyle +"; -fx-border-color: " + currentStyle + "; -fx-focus-color: " + currentStyle + "; -fx-faint-focus-color: " + currentStyle + ";");
@@ -250,19 +250,11 @@ public class GameInterfacePane extends Pane{
 		this.setCenterShape(true);
 		
 		ctrl.fitToWindow(this, displayPane, flowgrid);
-		//border.getChildren().add(flowgrid);
 		
-		//displayPane.setMinWidth(flowgrid.getMinWidth());
-		//displayPane.setPrefSize(width, height);
-		
-		
-		
-		//displayPane.getChildren().add(flowgrid);	//flowgrid
-		//displayPane.setAlignment(Pos.CENTER);
-		//return displayPane;
-		
-		/** Fires the first tile 4 times, to check whether the grid is already completed. **/ //TODO RENABLE
-		//((Tile) flowgrid.getChildren().get(0)).fire(); ((Tile) flowgrid.getChildren().get(0)).fire(); ((Tile) flowgrid.getChildren().get(0)).fire(); ((Tile) flowgrid.getChildren().get(0)).fire();
+		/** Fires the first tile 4 times, to check whether the grid is already completed. **/
+		for (int i = 0; i < 4; i++) {
+			((Tile) flowgrid.getChildren().get(0)).fire();
+		}
 	}
 
 	/**
@@ -402,4 +394,110 @@ public class GameInterfacePane extends Pane{
 		return flowgrid;
 	}
 	
+	private String gridToTileData() {
+		String printString = "";
+		for (int i = 0; i < getRowCount(); i++) {
+			for (int j = 0; j < getColumnCount(); j++) {
+				printString = printString + getTileString(getTile(i,j));
+			}
+			printString = printString + "\n"; // System.lineSeparator(); //TODO put back in?
+		}
+		return printString;
+	}
+	
+	private String getTileString(Tile tile){
+		String tileString = "";
+		if(tile.hasLeft()){
+			if(tile.hasUp()){
+				if(tile.hasRight()){
+					if(tile.hasDown()){
+						tileString = "\u254B";
+					}else{
+						tileString = "\u253B";
+					}
+				}else{
+					if(tile.hasDown()){
+						tileString = "\u252B";
+					}else{
+						tileString = "\u251B";
+					}
+				}
+			}else{
+				if(tile.hasRight()){
+					if(tile.hasDown()){
+						tileString = "\u2533";
+					}else{
+						tileString = "\u2501";
+					}
+				}else{
+					if(tile.hasDown()){
+						tileString = "\u2513";
+					}else{
+						tileString = "\u2578";
+					}
+				}
+			}
+		}else{
+			if(tile.hasUp()){
+				if(tile.hasRight()){
+					if(tile.hasDown()){
+						tileString = "\u2523";
+					}else{
+						tileString = "\u2517";
+					}
+				}else{
+					if(tile.hasDown()){
+						tileString = "\u2503";
+					}else{
+						tileString = "\u2579";
+					}
+				}
+			}else{
+				if(tile.hasRight()){
+					if(tile.hasDown()){
+						tileString = "\u250F";
+					}else{
+						tileString = "\u257A";
+					}
+				}else{
+					if(tile.hasDown()){
+						tileString = "\u257B";
+					}else{
+						//tileString = "\u2007";
+						tileString = "\u25CB";
+					}
+				}
+			}
+		}
+		return tileString;
+	}
+	
+	public Board getCurrentBoardData(){
+		this.tileData = gridToTileData();
+		String gamedata = "(W:" + getColumnCount() +" H:" + getRowCount() +")" + "\n" + this.tileData;
+		board.setTiledata(this.tileData);
+		board.setGamedata(gamedata);
+		board.setLogicTiles(getLogicTiles());
+		return board;
+	}
+
+	public void setNewOnComplete(boolean b) {
+		this.newOnComplete = b;
+	}
+	
+	public boolean getNewOnComplete() {
+		return this.newOnComplete;
+	}
+
+	public boolean getAllowDisplay() {
+		return allowDisplay;
+	}
+
+	public void setAllowDisplay(boolean allowDisplay) {
+		this.allowDisplay = allowDisplay;
+	}
+	
+	public void setButtons(ButtonPane menuPane, int windowHeight, GameInterfacePane gameinterface, Stage arg0) {
+		ctrl.menuPaneAdjustments(menuPane, windowHeight, gameinterface, arg0);
+	}
 }

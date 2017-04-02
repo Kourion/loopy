@@ -1,10 +1,14 @@
 package jpp.infinityloop.board;
 
+import jpp.infinityloop.boardalgorithms.LogicTile;
+
 public class Board {
 
 	private String gamedata = "";
 	private String tiledata = "";
 	private int columns = 0, rows = 0;
+	@SuppressWarnings("unused")
+	private LogicTile[][] solvedArray = null, logicTiles = null;
 	
 	public Board() {
 		// TODO Auto-generated constructor stub
@@ -73,4 +77,29 @@ public class Board {
 		this.rows = rows;
 	}
 	
+	/**
+	 * Allows saving the solved array in addition to the actual shown one.
+	 * @param The solved array which is supposed to be stored.
+	 */
+	public void setSolvedArray(LogicTile[][] solvedArray) {
+		this.solvedArray = solvedArray;
+	}
+	
+	/**
+	 * Allows saving the logic tiles in addition to its string representation.
+	 * @param The logic tile array representing the momentary status of the board.
+	 */
+	public void setLogicTiles(LogicTile[][] logicTiles) {
+		this.logicTiles = logicTiles;
+	}
+	
+	/**
+	 * Allows withdrawing the logic tiles.
+	 * @return The logic tile array representing the momentary status of the board.
+	 */
+	public LogicTile[][] getLogicTiles() {
+		return this.logicTiles;
+	}
+	
 }
+
