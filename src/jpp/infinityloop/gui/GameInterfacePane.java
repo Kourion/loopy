@@ -251,9 +251,22 @@ public class GameInterfacePane extends Pane{
 		
 		ctrl.fitToWindow(this, displayPane, flowgrid);
 		
+		Tile thisTile = null;
 		/** Fires the first tile 4 times, to check whether the grid is already completed. **/
-		for (int i = 0; i < 4; i++) {
-			((Tile) flowgrid.getChildren().get(0)).fire();
+		for (int i = 0; i < rowCount*columnCount; i++) {
+			if((((Tile) flowgrid.getChildren().get(i)).getType())==TileType.EMPTY){
+				thisTile = (((Tile) flowgrid.getChildren().get(i)));
+				break;
+			}
+		}
+		if(thisTile != null){
+			for (int i = 0; i < 4; i++) {
+				thisTile.fire();
+			}
+		}else{
+			for (int i = 0; i < 4; i++) {
+				((Tile) flowgrid.getChildren().get(0)).fire();
+			}
 		}
 	}
 
